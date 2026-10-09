@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { clientIp, rateLimit } from "@/lib/ratelimit";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { sendSupportNotification } from "@/lib/mailer";
 
 const TOPICS = new Set(["general", "billing", "refund", "bug", "feature"]);
 
@@ -26,5 +27,12 @@ export async function POST(req: Request) {
   const supabase = await supabaseServer();
   const { error } = await supabase.from("support_messages").insert({ name, email, topic, message });
   if (error) return NextResponse.json({ error: "Message not sent. Try again shortly." }, { status: 500 });
+  // The message is already saved (admin → Support), so an email failure is logged but not shown to the sender.
+  try {
+    const r = await sendSupportNotification({ name, email, topic, message });
+    if (!r.sent) console.warn("support email skipped:", r.reason);
+  } catch (e) {
+    console.error("support email failed:", (e as Error).message);
+  }
   return NextResponse.json({ ok: true });
 }
