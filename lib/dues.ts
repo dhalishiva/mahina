@@ -93,6 +93,35 @@ export function computeStatus(member: Member, payments: Payment[], now = new Dat
   };
 }
 
+/**
+ * How late (or how soon) a member's payment is, in days, counted in India time.
+ * - overdueDays: days since the due date of the oldest unpaid month (0 if nothing is overdue yet).
+ * - dueInDays: days until this month's due date, only when this month is still upcoming.
+ */
+export function dueTiming(st: MemberStatus, now = new Date()): { overdueDays: number; dueInDays: number | null } {
+  const t = istToday(now);
+  const todayUtc = Date.UTC(t.y, t.m - 1, t.d);
+  const oldest = st.months.find((ms) => ms.status === "due" || ms.status === "partial");
+  let overdueDays = 0;
+  if (oldest) {
+    const [y, m] = oldest.period.split("-").map(Number);
+    const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    const dueUtc = Date.UTC(y, m - 1, Math.min(st.member.due_day, lastDay));
+    overdueDays = Math.max(0, Math.round((todayUtc - dueUtc) / 86400_000));
+  }
+  const dueInDays = st.currentStatus === "upcoming" ? Math.max(0, st.member.due_day - t.d) : null;
+  return { overdueDays, dueInDays };
+}
+
+/** Default order for lists: most overdue first, then part-paid, then due soonest, then paid. */
+export function urgencyRank(st: MemberStatus, now = new Date()) {
+  const { overdueDays, dueInDays } = dueTiming(st, now);
+  if (st.outstanding > 0 && overdueDays > 0) return { group: 0, key: -overdueDays, tie: -st.outstanding };
+  if (st.outstanding > 0) return { group: 1, key: -st.outstanding, tie: 0 };
+  if (dueInDays !== null) return { group: 2, key: dueInDays, tie: 0 };
+  return { group: 3, key: 0, tie: 0 };
+}
+
 export const inr = (n: number) =>
   "₹" + Number(n).toLocaleString("en-IN", { maximumFractionDigits: 0 });
 

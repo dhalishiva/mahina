@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
-import { currentPeriod, inr, monthLabel, type MemberStatus } from "@/lib/dues";
+import { currentPeriod, dueTiming, inr, monthLabel, urgencyRank, type MemberStatus } from "@/lib/dues";
 import { Alert, Button } from "@/components/ui";
 import { Initials, PageTitle, Sheet, Stat, StatusPill } from "./bits";
 import { BulkAddForm, MemberForm, PaymentSheet, ReminderSheet, WaIcon } from "./sheets";
@@ -30,7 +30,7 @@ export function DashboardView() {
     const collected = payments.filter((p) => p.period === cur).reduce((a, p) => a + Number(p.amount), 0);
     const expected = active.reduce((a, x) => a + Number(x.member.monthly_fee), 0);
     const outstanding = active.reduce((a, x) => a + x.outstanding, 0);
-    const toRemind = active.filter((x) => x.outstanding > 0).sort((a, b) => b.dueMonths - a.dueMonths || b.outstanding - a.outstanding);
+    const toRemind = active.filter((x) => x.outstanding > 0).sort((a, b) => { const ra = urgencyRank(a), rb = urgencyRank(b); return ra.group - rb.group || ra.key - rb.key || ra.tie - rb.tie; });
     const paidCount = active.filter((x) => x.currentStatus === "paid").length;
     return { active, collected, expected, outstanding, toRemind, paidCount };
   }, [statuses, payments, cur]);
@@ -83,7 +83,7 @@ export function DashboardView() {
                   <Link href={`/app/members/${x.member.id}`} className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{x.member.name}</p>
                     <p className="truncate text-sm text-muted">
-                      <span className="font-semibold text-due">{inr(x.outstanding)}</span> · {x.dueMonths} {x.dueMonths === 1 ? "month" : "months"}{x.member.batch ? ` · ${x.member.batch}` : ""}
+                      <span className="font-semibold text-due">{inr(x.outstanding)}</span> · {(() => { const d = dueTiming(x).overdueDays; return d > 0 ? `${d} ${d === 1 ? "day" : "days"} overdue` : "part paid"; })()}{x.dueMonths > 1 ? ` · ${x.dueMonths} months` : ""}{x.member.batch ? ` · ${x.member.batch}` : ""}
                     </p>
                   </Link>
                   <button onClick={() => setPay(x)} className="hidden rounded-lg px-3 py-2 text-sm font-semibold text-ink hover:bg-ink-soft sm:block">Mark paid</button>
@@ -123,25 +123,73 @@ export function DashboardView() {
 }
 
 /* ---------------- MEMBERS ---------------- */
-type Filter = "all" | "due" | "paid" | "inactive";
+type Filter = "all" | "due" | "soon" | "paid" | "inactive";
+type Sort = "urgent" | "amount" | "duedate" | "name" | "recent";
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "due", label: "Overdue" },
+  { id: "soon", label: "Due in 7 days" },
+  { id: "paid", label: "Paid" },
+  { id: "inactive", label: "Inactive" },
+];
+const SORTS: { id: Sort; label: string }[] = [
+  { id: "urgent", label: "Most overdue first" },
+  { id: "amount", label: "Highest amount owed" },
+  { id: "duedate", label: "Due date in month" },
+  { id: "recent", label: "Recently paid" },
+  { id: "name", label: "Name A to Z" },
+];
+const SORT_KEY = "mahina.members.sort";
+
+function timingText(x: MemberStatus) {
+  const { overdueDays, dueInDays } = dueTiming(x);
+  if (x.outstanding > 0 && overdueDays > 0) return { text: `${overdueDays} ${overdueDays === 1 ? "day" : "days"} overdue`, tone: "text-due" };
+  if (x.outstanding > 0) return { text: "Part paid", tone: "text-due" };
+  if (dueInDays !== null) return { text: dueInDays === 0 ? "Due today" : `Due in ${dueInDays} ${dueInDays === 1 ? "day" : "days"}`, tone: "text-muted" };
+  return { text: "Paid this month", tone: "text-paid" };
+}
 
 export function MembersView({ initialAdd = false, initialFilter = "all" as Filter }) {
   const { statuses, loading, isPro, members } = useStore();
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<Filter>(initialFilter);
+  const [sort, setSortState] = useState<Sort>("urgent");
+  useEffect(() => {
+    try { const v = localStorage.getItem(SORT_KEY); if (SORTS.some((s) => s.id === v)) setSortState(v as Sort); } catch {}
+  }, []);
+  const setSort = (v: Sort) => { setSortState(v); try { localStorage.setItem(SORT_KEY, v); } catch {} };
   const [batch, setBatch] = useState("");
   const [adding, setAdding] = useState<"one" | "many" | null>(initialAdd ? "one" : null);
   const [remind, setRemind] = useState<MemberStatus | null>(null);
   const batches = useMemo(() => [...new Set(members.map((m) => m.batch).filter(Boolean))] as string[], [members]);
 
-  const list = useMemo(() => statuses.filter((x) => {
-    if (filter === "inactive" ? x.member.active : !x.member.active) return false;
-    if (filter === "due" && x.outstanding <= 0) return false;
-    if (filter === "paid" && x.currentStatus !== "paid") return false;
+  const matches = useCallback((x: MemberStatus, f: Filter) => {
+    if (f === "inactive" ? x.member.active : !x.member.active) return false;
+    if (f === "due" && x.outstanding <= 0) return false;
+    if (f === "soon") { const d = dueTiming(x).dueInDays; if (x.outstanding > 0 || d === null || d > 7) return false; }
+    if (f === "paid" && (x.outstanding > 0 || x.currentStatus !== "paid")) return false;
+    return true;
+  }, []);
+
+  const scoped = useMemo(() => statuses.filter((x) => {
     if (batch && x.member.batch !== batch) return false;
     if (q && !(`${x.member.name} ${x.member.phone || ""} ${x.member.batch || ""}`.toLowerCase().includes(q.toLowerCase()))) return false;
     return true;
-  }), [statuses, filter, batch, q]);
+  }), [statuses, batch, q]);
+
+  const counts = useMemo(() => Object.fromEntries(FILTERS.map((f) => [f.id, scoped.filter((x) => matches(x, f.id)).length])) as Record<Filter, number>, [scoped, matches]);
+
+  const list = useMemo(() => {
+    const byName = (a: MemberStatus, b: MemberStatus) => a.member.name.localeCompare(b.member.name, "en-IN");
+    const cmp: Record<Sort, (a: MemberStatus, b: MemberStatus) => number> = {
+      urgent: (a, b) => { const ra = urgencyRank(a), rb = urgencyRank(b); return ra.group - rb.group || ra.key - rb.key || ra.tie - rb.tie || byName(a, b); },
+      amount: (a, b) => b.outstanding - a.outstanding || byName(a, b),
+      duedate: (a, b) => a.member.due_day - b.member.due_day || byName(a, b),
+      recent: (a, b) => (b.lastPaidOn || "").localeCompare(a.lastPaidOn || "") || byName(a, b),
+      name: byName,
+    };
+    return scoped.filter((x) => matches(x, filter)).sort(cmp[sort]);
+  }, [scoped, filter, sort, matches]);
 
   if (loading) return <Loading />;
   const atLimit = !isPro && members.length >= SITE.freeLimit;
@@ -179,20 +227,29 @@ export function MembersView({ initialAdd = false, initialFilter = "all" as Filte
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, phone or batch" aria-label="Search members"
           className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 outline-none focus:border-ink focus:ring-2 focus:ring-ink/20 sm:max-w-xs" />
-        <div className="flex gap-1.5 overflow-x-auto" role="group" aria-label="Filter">
-          {(["all", "due", "paid", "inactive"] as Filter[]).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} aria-pressed={filter === f}
-              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-semibold capitalize ${filter === f ? "bg-text text-white" : "bg-white text-muted ring-1 ring-line"}`}>
-              {f === "due" ? "Owes money" : f === "paid" ? "Paid this month" : f}
-            </button>
-          ))}
+        <div className="flex gap-2 sm:ml-auto">
+          <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-line bg-white px-3 text-sm sm:flex-none">
+            <span className="whitespace-nowrap text-muted">Sort</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} aria-label="Sort members" className="min-w-0 flex-1 bg-transparent py-2 font-semibold outline-none">
+              {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </label>
+          {batches.length > 0 && (
+            <select value={batch} onChange={(e) => setBatch(e.target.value)} aria-label="Batch" className="rounded-xl border border-line bg-white px-3 py-2 text-sm">
+              <option value="">All batches</option>
+              {batches.map((b) => <option key={b}>{b}</option>)}
+            </select>
+          )}
         </div>
-        {batches.length > 0 && (
-          <select value={batch} onChange={(e) => setBatch(e.target.value)} aria-label="Batch" className="rounded-xl border border-line bg-white px-3 py-2 text-sm sm:ml-auto">
-            <option value="">All batches</option>
-            {batches.map((b) => <option key={b}>{b}</option>)}
-          </select>
-        )}
+      </div>
+      <div className="-mx-4 mt-3 flex gap-1.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0" role="group" aria-label="Filter">
+        {FILTERS.map((f) => (
+          <button key={f.id} onClick={() => setFilter(f.id)} aria-pressed={filter === f.id}
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-semibold ${filter === f.id ? "bg-text text-white" : "bg-white text-muted ring-1 ring-line"}`}>
+            {f.label}
+            <span className={`rounded-full px-1.5 text-xs ${filter === f.id ? "bg-white/20" : f.id === "due" && counts.due > 0 ? "bg-due-soft text-due" : "bg-surface"}`}>{counts[f.id]}</span>
+          </button>
+        ))}
       </div>
 
       <div className="mt-4 overflow-hidden rounded-2xl bg-white ring-1 ring-line">
@@ -210,6 +267,7 @@ export function MembersView({ initialAdd = false, initialFilter = "all" as Filte
                 <Link href={`/app/members/${x.member.id}`} className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{x.member.name}</p>
                   <p className="truncate text-sm text-muted">{inr(x.member.monthly_fee)}/mo · due {ordinal(x.member.due_day)}{x.member.batch ? ` · ${x.member.batch}` : ""}</p>
+                  {x.member.active && (() => { const tt = timingText(x); return <p className={`truncate text-xs font-semibold ${tt.tone}`}>{tt.text}{x.dueMonths > 1 ? ` · ${x.dueMonths} months` : ""}</p>; })()}
                 </Link>
                 <div className="flex flex-col items-end gap-1">
                   <StatusPill status={x.outstanding > 0 ? "due" : x.currentStatus} amount={x.outstanding > 0 ? inr(x.outstanding) : undefined} />

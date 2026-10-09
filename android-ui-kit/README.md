@@ -43,7 +43,7 @@ Everything needed to build the native Android app for **Mahina by SlotRecover**.
 | 04 | Sign up | Name, email and password (min 8 characters). Then a 6–8 digit code screen: `verifyOtp(type=signup)`; resend with `resend(type=signup)` after a 60 s cooldown. Use `autofill` hints for one-time codes. |
 | 05 | First-run setup | Shown when `profiles.business_name` is empty. Fields: business name, business type, UPI ID, name on UPI. Validate the UPI ID with `^[a-z0-9._-]{2,64}@[a-z]{2,32}$`. |
 | 06 | Home | See "Home screen details" below. |
-| 07 | Members | Search field, filter chips (All, Owes money, Paid this month, Inactive), a batch dropdown when batches exist, and an extended FAB "Add member". Overflow menu: Add several, Pick from contacts, Export CSV. |
+| 07 | Members | Search field; a **Sort** dropdown (Most overdue first [default, remembered], Highest amount owed, Due date in month, Recently paid, Name A to Z); filter chips with counts (All, Overdue, Due in 7 days, Paid, Inactive); a batch dropdown when batches exist; an extended FAB "Add member". Each row shows a timing line: "N days overdue" (red), "Part paid", "Due in N days" / "Due today" (grey) or "Paid this month" (green), plus "· N months" when more than one month is owed. Overflow menu: Add several, Pick from contacts, Export CSV. See "Sorting and timing" below. |
 | 08 | Members, empty | Register illustration plus three actions. |
 | 09 | Add member | Modal bottom sheet. On the free plan, adding a 16th member fails: show `err_free_limit` with an Upgrade action. |
 | 10 | Add several | Bottom sheet. Each line is "name, phone, fee"; separators can be comma, tab or semicolon. Validate every line and report the first bad line by number. |
@@ -91,6 +91,15 @@ Port `lib/dues.ts` exactly.
 
 - **Outstanding** is the sum of `fee − paid` over months that are `due` or `partial`.
 - **Inactive members** keep their history but drop out of dashboard totals and the "To remind" list.
+
+### Sorting and timing
+
+Port `dueTiming` and `urgencyRank` from `lib/dues.ts`.
+
+- **overdueDays:** days from the due date of the oldest unpaid (`due` or `partial`) month to today in IST. The due date is `due_day` of that month, capped at the month's last day. Never negative.
+- **dueInDays:** only when this month is `upcoming`: `due_day − today's day`.
+- **Default order ("Most overdue first"):** overdue members by overdueDays descending, then outstanding descending; then part-paid members not yet overdue; then upcoming by dueInDays ascending; then paid. Ties break by name. The Home "To remind" list uses the same order.
+- **Filters:** Overdue = outstanding > 0. Due in 7 days = nothing owed and dueInDays ≤ 7. Paid = nothing owed and this month paid. All filters except Inactive show active members only.
 
 ### Reminder text
 
