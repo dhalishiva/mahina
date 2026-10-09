@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { computeStatus, type Member, type MemberStatus, type Payment } from "@/lib/dues";
 import type { Lang } from "@/lib/reminders";
+import { SITE } from "@/lib/site";
 
 export type Profile = {
   id: string;
@@ -132,7 +133,7 @@ export function FixtureProvider({ profile, members, payments, children }: { prof
   const value = useMemo<Store>(() => ({
     loading: false, error: null, profile, members, payments,
     statuses: members.map((m) => computeStatus(m, payments)),
-    isPro: planActive(profile), origin: "https://mahina.vercel.app",
+    isPro: planActive(profile), origin: SITE.url,
     reload: async () => {},
     addMembers: async () => null, updateMember: async () => null, deleteMember: async () => null,
     recordPayment: async () => ({ error: null }), deletePayment: async () => null, saveProfile: async () => null,

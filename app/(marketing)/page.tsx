@@ -221,7 +221,7 @@ function WhatsAppPreview() {
       <div className="space-y-3 p-4">
         <div className="ml-auto max-w-[85%] rounded-xl rounded-tr-sm bg-[#d9fdd3] p-3 text-[0.95rem] leading-snug text-[#111b21] shadow-sm">
           Namaste 🙏<br />Sharma Tuition Classes: Diya ki Oct ki fees ₹1,500 due hai.<br />Ek click mein UPI se pay karein:
-          <span className="block text-[#027eb5] underline">mahina.vercel.app/p/7f3c…</span>
+          <span className="block text-[#027eb5] underline">{SITE.url.replace("https://", "")}/p/7f3c…</span>
           Agar payment ho gaya hai toh ignore karein. Thank you!
           <span className="mt-1 block text-right text-[0.7rem] text-[#667781]">9:02 am ✓✓</span>
         </div>

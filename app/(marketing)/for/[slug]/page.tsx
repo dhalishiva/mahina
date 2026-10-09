@@ -28,7 +28,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ slug: 
   if (!s) notFound();
   const sample = reminderText("hinglish", {
     name: s.example[1].name, business: "Your business", amount: `₹${s.example[1].fee.toLocaleString("en-IN")}`, months: "Oct",
-    link: "mahina.vercel.app/p/…",
+    link: `${SITE.url.replace("https://", "")}/p/…`,
   });
   const others = SEGMENTS.filter((o) => o.slug !== s.slug).slice(0, 5);
 
