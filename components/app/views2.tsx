@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { Alert, Button, Field, Select } from "@/components/ui";
 import { PageTitle } from "./bits";
+import { SignOut } from "./AppShell";
 import { Loading } from "./views";
 import { PLANS, SITE, type PlanCode } from "@/lib/site";
 import type { Lang } from "@/lib/reminders";
@@ -66,8 +67,11 @@ export function SettingsView({ welcome = false }: { welcome?: boolean }) {
         {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
         <Button disabled={busy} className="w-full py-3 sm:w-auto">{busy ? "Saving…" : welcome ? "Save and add members" : "Save settings"}</Button>
       </form>
-      <div className="mt-8 max-w-xl text-sm text-muted">
-        <p>Signed in as {profile.email}. To delete your account and all data, <Link href="/contact" className="text-ink underline">contact us</Link>.</p>
+      <div className="mt-8 max-w-xl rounded-2xl bg-white p-5 ring-1 ring-line">
+        <p className="text-sm text-muted">Signed in as</p>
+        <p className="truncate font-semibold">{profile.email}</p>
+        <SignOut className="mt-4 w-full rounded-xl px-4 py-3 font-semibold text-due ring-1 ring-due/30 hover:bg-due-soft sm:w-auto" />
+        <p className="mt-4 text-sm text-muted">To delete your account and all data, <Link href="/contact" className="text-ink underline">contact us</Link>.</p>
       </div>
     </>
   );

@@ -57,6 +57,18 @@ export function AppShell({ children, active }: { children: React.ReactNode; acti
         <div className="flex items-center gap-2">
           {profile?.is_admin && <Link href="/admin" className="rounded-lg px-2 py-1 text-sm font-semibold text-ink">Admin</Link>}
           <span className={`rounded-md px-2 py-0.5 text-xs font-bold ${isPro ? "bg-ink text-white" : "bg-surface text-muted ring-1 ring-line"}`}>{isPro ? "PRO" : "FREE"}</span>
+          <details key={current} className="relative">
+            <summary aria-label="Account" className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-full bg-ink-soft font-bold text-ink [&::-webkit-details-marker]:hidden">
+              {(profile?.full_name || profile?.email || "?").trim().charAt(0).toUpperCase()}
+            </summary>
+            <div className="absolute right-0 top-11 z-40 w-60 rounded-2xl bg-white p-2 shadow-xl ring-1 ring-line">
+              <p className="truncate px-3 pt-2 text-sm font-semibold">{profile?.business_name || profile?.full_name || "Your business"}</p>
+              <p className="truncate px-3 pb-2 text-xs text-muted">{profile?.email}</p>
+              <Link href="/app/settings" className="block rounded-lg px-3 py-2.5 text-sm hover:bg-surface">Settings</Link>
+              <Link href="/help" className="block rounded-lg px-3 py-2.5 text-sm hover:bg-surface">Help</Link>
+              <SignOut className="block w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-due hover:bg-due-soft" />
+            </div>
+          </details>
         </div>
       </header>
 
@@ -76,10 +88,11 @@ export function AppShell({ children, active }: { children: React.ReactNode; acti
   );
 }
 
-export function SignOut() {
+export function SignOut({ className = "text-xs font-semibold text-muted hover:text-due" }: { className?: string }) {
   return (
     <button
-      className="text-xs font-semibold text-muted hover:text-due"
+      type="button"
+      className={className}
       onClick={async () => { await supabaseBrowser().auth.signOut(); location.href = "/login"; }}
     >Sign out</button>
   );
