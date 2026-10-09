@@ -161,3 +161,13 @@ Do **not** verify payments in the app. The flow:
 - Text scales up to 200% without clipping; stat cards wrap instead of truncating amounts.
 - The PAID stamp animation honours the system "Remove animations" setting.
 - TalkBack reads money as "1,500 rupees", not "rupee sign 1,500"; set `contentDescription` on amount Text.
+
+## Bot protection (Cloudflare Turnstile)
+
+When CAPTCHA protection is switched on in Supabase (Auth → Attack Protection), **every** sign-up, sign-in, email-code and password-reset call must include `captchaToken`. This applies to the Android app as well as the web app. To get a token on Android:
+
+1. Load a small HTML page in a `WebView` that renders Turnstile with the same site key (`NEXT_PUBLIC_TURNSTILE_SITE_KEY` on Vercel).
+2. Pass the token back through a `JavascriptInterface`.
+3. Send it in the auth call's `captchaToken` option. Tokens are single-use and expire after 5 minutes, so fetch a fresh one for each call.
+
+`verifyOtp` doesn't need a token.

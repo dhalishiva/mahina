@@ -4,12 +4,12 @@ const supabaseHost = "https://koenogmiaawffiwfmmfh.supabase.co";
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://va.vercel-scripts.com",
+  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://va.vercel-scripts.com https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  `connect-src 'self' ${supabaseHost} wss://koenogmiaawffiwfmmfh.supabase.co https://api.razorpay.com https://lumberjack.razorpay.com https://vitals.vercel-insights.com https://va.vercel-scripts.com`,
-  "frame-src https://api.razorpay.com https://checkout.razorpay.com",
+  `connect-src 'self' ${supabaseHost} wss://koenogmiaawffiwfmmfh.supabase.co https://api.razorpay.com https://lumberjack.razorpay.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://challenges.cloudflare.com`,
+  "frame-src https://api.razorpay.com https://checkout.razorpay.com https://challenges.cloudflare.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

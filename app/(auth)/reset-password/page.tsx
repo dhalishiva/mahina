@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { Alert, Button, Field } from "@/components/ui";
 import { OtpField, authErrorText, useCooldown } from "@/components/OtpField";
+import { useTurnstile } from "@/components/Turnstile";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -15,9 +16,11 @@ export default function ResetPassword() {
   const [msg, setMsg] = useState<{ kind: "error" | "ok"; text: string } | null>(null);
   const cooldown = useCooldown();
   const sb = supabaseBrowser();
+  const captcha = useTurnstile("reset");
 
   async function send(em: string) {
-    const { error } = await sb.auth.resetPasswordForEmail(em);
+    const { error } = await sb.auth.resetPasswordForEmail(em, captcha.opts);
+    captcha.reset();
     // Same message whether or not the account exists, so emails can't be probed.
     if (error && /rate|security purposes|too many/i.test(error.message)) { setMsg({ kind: "error", text: authErrorText(error.message) }); return false; }
     cooldown.start();
@@ -60,7 +63,7 @@ export default function ResetPassword() {
           <form onSubmit={requestCode} className="mt-8 space-y-4">
             <Field label="Email" name="email" type="email" required autoComplete="email" defaultValue={email} />
             {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
-            <Button disabled={busy} className="w-full py-3">{busy ? "Sending…" : "Email me a code"}</Button>
+            <Button disabled={busy || !captcha.ready} className="w-full py-3">{busy ? "Sending…" : !captcha.ready ? "Checking you're not a bot…" : "Email me a code"}</Button>
           </form>
         </>
       ) : (
@@ -73,13 +76,14 @@ export default function ResetPassword() {
             <Button disabled={busy} className="w-full py-3">{busy ? "Saving…" : "Set new password"}</Button>
           </form>
           <div className="mt-4 flex justify-between text-sm">
-            <button className="font-semibold text-ink disabled:text-muted" disabled={cooldown.left > 0} onClick={async () => { setMsg(null); await send(email); }}>
+            <button className="font-semibold text-ink disabled:text-muted" disabled={cooldown.left > 0 || !captcha.ready} onClick={async () => { setMsg(null); await send(email); }}>
               {cooldown.left > 0 ? `Send a new code in ${cooldown.left}s` : "Send a new code"}
             </button>
             <button className="font-semibold text-muted hover:text-text" onClick={() => { setStep("email"); setCode(""); setMsg(null); }}>Change email</button>
           </div>
         </>
       )}
+      <captcha.Widget />
       <p className="mt-8 text-center text-sm"><Link href="/login" className="font-semibold text-ink hover:underline">Back to log in</Link></p>
     </div>
   );

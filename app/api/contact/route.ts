@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { clientIp, rateLimit } from "@/lib/ratelimit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const TOPICS = new Set(["general", "billing", "refund", "bug", "feature"]);
 
@@ -11,6 +12,9 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   if (body.company) return NextResponse.json({ ok: true }); // honeypot
+  if (!(await verifyTurnstile(body.captchaToken, clientIp(req)))) {
+    return NextResponse.json({ error: "Bot check failed. Refresh the page and try again." }, { status: 400 });
+  }
 
   const name = String(body.name || "").trim().slice(0, 80);
   const email = String(body.email || "").trim().slice(0, 120);

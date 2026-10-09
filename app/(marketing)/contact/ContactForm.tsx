@@ -1,16 +1,19 @@
 "use client";
 import { useState } from "react";
+import { useTurnstile } from "@/components/Turnstile";
 
 export function ContactForm() {
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
+  const captcha = useTurnstile("contact");
   const field = "mt-1 w-full rounded-xl border border-line bg-white px-3.5 py-2.5 outline-none focus:border-ink focus:ring-2 focus:ring-ink/20";
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setState("sending");
     const fd = new FormData(e.currentTarget);
-    const res = await fetch("/api/contact", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(Object.fromEntries(fd)) });
+    const res = await fetch("/api/contact", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...Object.fromEntries(fd), captchaToken: captcha.token }) });
+    captcha.reset();
     if (res.ok) setState("sent");
     else { setState("error"); setError((await res.json().catch(() => ({}))).error || "Message not sent. Check the fields and try again."); }
   }
@@ -35,7 +38,8 @@ export function ContactForm() {
       {/* honeypot: hidden from people, filled by bots */}
       <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
       {state === "error" && <p role="alert" className="text-sm text-due">{error}</p>}
-      <button disabled={state === "sending"} className="rounded-xl bg-ink px-5 py-3 font-semibold text-white hover:bg-ink-dark disabled:opacity-60">
+      <captcha.Widget />
+      <button disabled={state === "sending" || !captcha.ready} className="rounded-xl bg-ink px-5 py-3 font-semibold text-white hover:bg-ink-dark disabled:opacity-60">
         {state === "sending" ? "Sending…" : "Send message"}
       </button>
     </form>

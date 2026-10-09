@@ -6,6 +6,7 @@ import { supabaseBrowser } from "@/lib/supabase/client";
 import { Alert, Button, Field } from "@/components/ui";
 import { safeNext } from "@/lib/safe-next";
 import { OtpField, authErrorText, useCooldown } from "@/components/OtpField";
+import { useTurnstile } from "@/components/Turnstile";
 
 export function LoginForm() {
   const router = useRouter();
@@ -19,11 +20,13 @@ export function LoginForm() {
   const [msg, setMsg] = useState<{ kind: "error" | "ok"; text: string } | null>(null);
   const cooldown = useCooldown();
   const sb = supabaseBrowser();
+  const captcha = useTurnstile("login");
 
   function done() { router.replace(next); router.refresh(); }
 
   async function sendCode(em: string) {
-    const { error } = await sb.auth.signInWithOtp({ email: em, options: { shouldCreateUser: false } });
+    const { error } = await sb.auth.signInWithOtp({ email: em, options: { shouldCreateUser: false, ...captcha.opts } });
+    captcha.reset();
     if (error) {
       setMsg({ kind: "error", text: error.message.toLowerCase().includes("signups not allowed") || error.message.toLowerCase().includes("not found") ? "No account uses that email. Sign up first." : authErrorText(error.message) });
       return false;
@@ -39,13 +42,13 @@ export function LoginForm() {
     const fd = new FormData(e.currentTarget);
     if (mode === "password") {
       const em = String(fd.get("email")).trim().toLowerCase();
-      const { error } = await sb.auth.signInWithPassword({ email: em, password: String(fd.get("password")) });
+      const { error } = await sb.auth.signInWithPassword({ email: em, password: String(fd.get("password")), options: captcha.opts });
       setBusy(false);
+      captcha.reset();
       if (!error) return done();
       if (error.message.toLowerCase().includes("confirm")) {
-        // Account exists but email isn't verified yet: send a fresh signup code.
-        await sb.auth.resend({ type: "signup", email: em });
-        setMsg({ kind: "error", text: "Confirm your email first. We've sent you a new code; use “Log in with a code” to enter it." });
+        // Account exists but email isn't verified yet. Logging in with a code also confirms the email.
+        setMsg({ kind: "error", text: "Your email isn't confirmed yet. Use “Log in with a code” below; it confirms your email too." });
       } else setMsg({ kind: "error", text: error.message.toLowerCase().includes("rate") ? authErrorText(error.message) : "Email or password is incorrect." });
       return;
     }
@@ -76,13 +79,14 @@ export function LoginForm() {
         )}
         {mode === "code" && codeSent && <OtpField value={code} onChange={setCode} />}
         {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
-        <Button type="submit" disabled={busy} className="w-full py-3">
-          {busy ? "Please wait…" : mode === "password" ? "Log in" : codeSent ? "Log in" : "Email me a code"}
+        <captcha.Widget />
+        <Button type="submit" disabled={busy || (!captcha.ready && !(mode === "code" && codeSent))} className="w-full py-3">
+          {busy ? "Please wait…" : mode === "code" && codeSent ? "Log in" : !captcha.ready ? "Checking you're not a bot…" : mode === "password" ? "Log in" : "Email me a code"}
         </Button>
       </form>
       {mode === "code" && codeSent && (
         <div className="mt-4 flex justify-between text-sm">
-          <button className="font-semibold text-ink disabled:text-muted" disabled={cooldown.left > 0} onClick={async () => { setMsg(null); await sendCode(email); }}>
+          <button className="font-semibold text-ink disabled:text-muted" disabled={cooldown.left > 0 || !captcha.ready} onClick={async () => { setMsg(null); await sendCode(email); }}>
             {cooldown.left > 0 ? `Send a new code in ${cooldown.left}s` : "Send a new code"}
           </button>
           <button className="font-semibold text-muted hover:text-text" onClick={() => { setCodeSent(false); setCode(""); setMsg(null); }}>Change email</button>
