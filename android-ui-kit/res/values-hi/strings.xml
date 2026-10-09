@@ -14,7 +14,7 @@
     <string name="login_title">फिर से स्वागत है</string>
     <string name="login_sub">अपने फीस रजिस्टर में लॉग इन करें।</string>
     <string name="signup_title">अपना मुफ़्त रजिस्टर शुरू करें</string>
-    <string name="signup_sub">15 सदस्यों तक मुफ़्त। कार्ड की ज़रूरत नहीं।</string>
+    <string name="signup_sub">2 सदस्यों तक मुफ़्त। कार्ड की ज़रूरत नहीं।</string>
     <string name="field_name">आपका नाम</string>
     <string name="field_email">ईमेल</string>
     <string name="field_password">पासवर्ड</string>

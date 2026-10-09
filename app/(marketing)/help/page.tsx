@@ -43,9 +43,10 @@ const sections = [
     id: "billing",
     title: "Plans and billing",
     items: [
-      { q: "What does the free plan include?", a: "Everything, for up to 15 members." },
-      { q: "How do I upgrade to Pro?", a: "Open Billing in the app and choose monthly (₹149) or yearly (₹1,490). Pay with UPI, card or net banking through Razorpay. Pro starts immediately." },
-      { q: "What happens when Pro ends?", a: "Your data stays. You can keep using all existing members; adding new ones beyond 15 needs Pro again." },
+      { q: "What does the free plan include?", a: "Every feature, for up to 2 members." },
+      { q: "How do I upgrade to Pro?", a: "Open Plan in the app. Choose monthly autopay (₹149 a month, set up once with UPI autopay or a card) or yearly (₹1,490, paid once). Pro starts immediately." },
+      { q: "What happens when Pro ends?", a: "Your data stays. You can keep using all existing members; adding new ones beyond 2 needs Pro again." },
+      { q: "How do I turn off autopay?", a: "Open Plan in the app and tap Turn off autopay. No more charges are made, and Pro stays active until the end of the month you paid for. You can also cancel the mandate from your UPI app." },
     ],
   },
 ];

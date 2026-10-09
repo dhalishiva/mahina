@@ -12,7 +12,8 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => ({}));
   const plan = body?.plan as PlanCode;
-  if (!(plan in PLANS)) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
+  // Monthly is autopay now (/api/billing/subscribe); one-time orders are yearly only.
+  if (plan !== "pro_yearly" || !(plan in PLANS)) return NextResponse.json({ error: "Unknown plan" }, { status: 400 });
   try {
     const order = await createOrder(user.id, plan);
     return NextResponse.json({ id: order.id, amount: order.amount });

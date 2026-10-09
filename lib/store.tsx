@@ -17,6 +17,8 @@ export type Profile = {
   reminder_lang: Lang;
   plan: "free" | "pro";
   plan_expires_at: string | null;
+  subscription_id: string | null;
+  subscription_status: string | null;
   is_admin: boolean;
   created_at: string;
 };
@@ -53,7 +55,7 @@ export const planActive = (p: Profile | null) =>
   !!p && p.plan === "pro" && (!p.plan_expires_at || new Date(p.plan_expires_at) > new Date());
 
 function friendly(msg: string) {
-  if (msg.includes("FREE_LIMIT")) return "The free plan allows up to 15 members. Upgrade to Pro to add more.";
+  if (msg.includes("FREE_LIMIT")) return "The free plan allows up to 2 members. Upgrade to Pro to add more.";
   if (msg.includes("upi_id")) return "That UPI ID doesn't look right. It should look like name@bank.";
   if (msg.includes("phone")) return "Enter a valid phone number (10 digits).";
   if (msg.includes("violates check")) return "Some details are invalid. Check the fields and try again.";

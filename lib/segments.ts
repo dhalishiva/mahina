@@ -19,7 +19,7 @@ export const SEGMENTS: Segment[] = [
     title: "Tuition Fee Management App for Home Tutors — Fee Reminders on WhatsApp",
     h1: "Tuition fee tracking for home tutors and coaching classes",
     description:
-      "Track monthly tuition fees, send WhatsApp fee reminders to parents in Hindi or English with a UPI payment link, and share fee receipts. Free for up to 15 students.",
+      "Track monthly tuition fees, send WhatsApp fee reminders to parents in Hindi or English with a UPI payment link, and share fee receipts. Free to try with 2 students.",
     intro:
       "Most home tutors keep fees in a notebook and remember dues in their head. By the 10th of the month it is hard to tell which parent paid by UPI, who paid cash to the child, and who has not paid at all. Mahina keeps one fee register for every batch and lets you remind parents without the awkward phone call.",
     pains: [
@@ -85,7 +85,7 @@ export const SEGMENTS: Segment[] = [
     ],
     faqs: [
       { q: "Can each member have a different due date?", a: "Yes. Set the due day for each member, for example the date they joined, and Mahina marks them due from that day each month." },
-      { q: "Is there a limit on members?", a: "The free plan covers 15 members. Pro is ₹149 a month for unlimited members." },
+      { q: "Is there a limit on members?", a: "The free plan covers 2 members. Pro is ₹149 a month for unlimited members." },
     ],
   },
   {
@@ -143,7 +143,7 @@ export const SEGMENTS: Segment[] = [
     title: "PG Rent Collection App — Monthly Rent Reminder on WhatsApp with UPI",
     h1: "Rent reminders for small PGs and hostels",
     description:
-      "Collect PG and hostel rent on time. Track each tenant's monthly rent, send WhatsApp rent reminders with your UPI QR, and share rent receipts. Free for up to 15 tenants.",
+      "Collect PG and hostel rent on time. Track each tenant's monthly rent, send WhatsApp rent reminders with your UPI QR, and share rent receipts. Free to try with 2 tenants.",
     intro:
       "If you run a small PG or rent out a few rooms, you do not need property-management software with a 30-minute demo. You need to know who has not paid this month and a quick way to remind them. That is what Mahina does.",
     pains: [

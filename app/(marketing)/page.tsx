@@ -15,7 +15,7 @@ const FAQS = [
   { q: "Do my students or customers need to install anything?", a: "No. They receive a normal WhatsApp message from your number with a link. The link opens a page with your UPI QR code, the exact amount, and a button that opens their UPI app." },
   { q: "How does Mahina know someone has paid?", a: "You record the payment in one tap when you see it in your UPI app or receive cash. This keeps the money in your account with no gateway fees, and you stay in control of what counts as paid." },
   { q: "Can I send reminders in Hindi?", a: "Yes. Reminders can go in Hindi, Hinglish or English, in a gentle or firm tone." },
-  { q: "What does it cost?", a: `Free for up to ${SITE.freeLimit} members, forever. Pro is ₹149 a month or ₹1,490 a year for unlimited members. No card is needed to start.` },
+  { q: "What does it cost?", a: `Free for up to ${SITE.freeLimit} members, forever. Pro is ₹149 a month on autopay (turn off anytime) or ₹1,490 a year for unlimited members. No card is needed to start.` },
   { q: "Is my data safe?", a: "Your data is stored in a secured database in Mumbai, India. Every record is locked to your account, and the payment links your members receive show only their first name and the amount due." },
   { q: "Can I use it on my phone?", a: "Yes. Mahina is built for phones first and works in any browser. You can add it to your home screen like an app." },
 ];

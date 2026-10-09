@@ -6,7 +6,7 @@ Monthly fee collection for India's small teachers, trainers and service provider
 
 - Next.js 16 (App Router) on Vercel, Tailwind CSS 4
 - Supabase (Postgres + Auth), project `koenogmiaawffiwfmmfh`, region ap-south-1 (Mumbai)
-- Razorpay for Pro purchases (prepaid, no auto-renewal)
+- Razorpay for Pro: ₹149/month autopay (Razorpay Subscriptions) or ₹1,490/year one-time
 - Vercel Web Analytics and Speed Insights
 
 ## Routes

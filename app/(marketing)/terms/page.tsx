@@ -33,8 +33,9 @@ export default function Terms() {
 
       <h2>5. Plans and payment</h2>
       <ul>
-        <li>The Free plan is available at no cost for up to 15 members. We may change free plan limits with 30 days&apos; notice.</li>
-        <li>Pro is a prepaid plan for one month (₹149) or one year (₹1,490). It does not renew automatically.</li>
+        <li>The Free plan is available at no cost for up to 2 members. We may change free plan limits with 30 days&apos; notice.</li>
+        <li>Pro monthly costs ₹149 and renews automatically every month through a UPI autopay mandate or card until you turn it off. You can turn it off at any time from the Plan page; Pro then stays active until the end of the paid month.</li>
+        <li>Pro yearly costs ₹1,490, is paid once and does not renew automatically.</li>
         <li>Payments for Pro are processed by Razorpay. Prices are in Indian rupees.</li>
         <li>Refunds are governed by our <Link href="/refund-policy">cancellation and refund policy</Link>.</li>
       </ul>

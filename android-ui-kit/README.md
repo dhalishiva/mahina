@@ -51,7 +51,7 @@ Everything needed to build the native Android app for **Mahina by SlotRecover**.
 | 12 | Record payment | Bottom sheet. "For month" lists every month from the start month to next month, newest first, each tagged paid, due, ₹X left or advance. The amount defaults to what's left for that month. "Paid by" is a segmented choice. "Paid on" defaults to today and can't be in the future. |
 | 13 | Payment recorded | The sheet turns into a success state. The month chip behind it gets the stamp animation. Primary action: "Send receipt on WhatsApp". |
 | 14 | Reminder composer | Bottom sheet. Language toggle and tone toggle, a live preview in a chat bubble, then "Open WhatsApp" and "Copy message". Default tone is firm if 2 or more months are due, otherwise gentle. Default language comes from `profiles.reminder_lang`. |
-| 15 | Plan | Free usage meter, Pro yearly (highlighted) and Pro monthly. Pay through the Razorpay Android SDK; see "Billing" below. |
+| 15 | Plan | Free usage meter, **Pro monthly autopay** (₹149/month, highlighted) and Pro yearly (₹1,490 one-time). When autopay is on, show "Autopay is on" and a "Turn off autopay" action with a confirm step. See "Billing" below. The reference PNG predates autopay; follow the web app's Plan page for layout. |
 | 16 | Settings | Grouped list that edits the same profile fields as setup. Also: app language (follows the system by default; per-app language on Android 13+), help, privacy, terms, delete account (opens the contact form), sign out. |
 | 17 | Components | Buttons, chips, fields (rest, focused and error), stat cards, list row, month chips, PAID stamp, banners and colour swatches. |
 
@@ -129,8 +129,8 @@ Row-level security limits every query to the signed-in user's own rows.
 
 | Table | Columns | Access from the app |
 | --- | --- | --- |
-| `profiles` | id, email, full_name, business_name, business_type, phone, upi_id, upi_name, reminder_lang (`en` \| `hi` \| `hinglish`), plan (`free` \| `pro`), plan_expires_at, is_admin, created_at | Read. Update only full_name, business_name, business_type, phone, upi_id, upi_name, reminder_lang. |
-| `members` | id, owner_id, name, phone, monthly_fee, due_day (1–28), batch, start_month (date, 1st of month), active, notes, pay_token, created_at | Full CRUD. `owner_id` defaults to `auth.uid()`. Inserting beyond 15 on free raises `FREE_LIMIT`. |
+| `profiles` | id, email, full_name, business_name, business_type, phone, upi_id, upi_name, reminder_lang (`en` \| `hi` \| `hinglish`), plan (`free` \| `pro`), plan_expires_at, subscription_id, subscription_status, is_admin, created_at | Read. Update only full_name, business_name, business_type, phone, upi_id, upi_name, reminder_lang. |
+| `members` | id, owner_id, name, phone, monthly_fee, due_day (1–28), batch, start_month (date, 1st of month), active, notes, pay_token, created_at | Full CRUD. `owner_id` defaults to `auth.uid()`. Inserting beyond 2 on free raises `FREE_LIMIT`. |
 | `payments` | id, owner_id, member_id, period (date, 1st of month), amount, method (`upi` \| `cash` \| `bank` \| `other`), paid_on, note, receipt_no, receipt_token, receipt_code, created_at | Full CRUD. Insert returns `receipt_no` and `receipt_code` (8-character short code used in receipt links). |
 | `billing_orders` | id, user_id, razorpay_order_id, razorpay_payment_id, plan_code, amount_paise, status, created_at | Read only. |
 | `support_messages` | name, email, topic, message | Insert only (the contact form). |
@@ -147,11 +147,22 @@ Row-level security limits every query to the signed-in user's own rows.
 
 ### Billing
 
-Do **not** verify payments in the app. The flow:
+Do **not** verify payments in the app. Every call below sends `Authorization: Bearer <supabase access_token>`. Free plan = 2 members.
 
-1. Call `POST https://mahina.kriosity.in/api/billing/order` with body `{ "plan": "pro_monthly" | "pro_yearly" }`. Send the header `Authorization: Bearer <supabase access_token>`.
-2. Open Razorpay Checkout using the returned `order_id`.
-3. Send the success payload to `POST /api/billing/verify`.
+**Pro monthly is autopay (Razorpay Subscriptions, ₹149/month).**
+
+1. `POST https://mahina.kriosity.in/api/billing/subscribe` (no body). Returns `{ subscription_id }`. A `409` means autopay is already on.
+2. Open Razorpay Checkout with `subscription_id` (not `order_id` or `amount`). The user approves a UPI autopay mandate or a card.
+3. Send the success payload `{ razorpay_payment_id, razorpay_subscription_id, razorpay_signature }` to `POST /api/billing/verify`.
+4. Refresh the profile.
+
+**Autopay is on** when `subscription_status` is `active`, `authenticated` or `pending`. To turn it off: `POST /api/billing/cancel` (no body), then refresh. Pro stays active until `plan_expires_at`. Monthly renewals are handled by the server webhook; the app does nothing.
+
+**Pro yearly is a one-time payment (₹1,490).**
+
+1. `POST /api/billing/order` with body `{ "plan": "pro_yearly" }`. Returns `{ id, amount }`.
+2. Open Razorpay Checkout with `order_id` and `amount`.
+3. Send `{ razorpay_order_id, razorpay_payment_id, razorpay_signature }` to `POST /api/billing/verify`.
 4. Refresh the profile.
 
 ## Accessibility checklist

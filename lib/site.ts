@@ -5,11 +5,11 @@ export const SITE = {
   url: (process.env.NEXT_PUBLIC_SITE_URL || "https://mahina.kriosity.in").replace(/\/$/, ""),
   tagline: "Monthly fee collection on WhatsApp and UPI",
   description:
-    "Mahina helps tuition teachers, tiffin services, gyms, yoga and music classes collect monthly fees on time. Send WhatsApp fee reminders with a UPI payment link, track who has paid, and share receipts. Free for up to 15 members.",
+    "Mahina helps tuition teachers, tiffin services, gyms, yoga and music classes collect monthly fees on time. Send WhatsApp fee reminders with a UPI payment link, track who has paid, and share receipts. Free for up to 2 members.",
   email: "support@kriosity.in",
   legalEntity: "Shiva Dhali Services",
   city: "Noida, Uttar Pradesh, India",
-  freeLimit: 15,
+  freeLimit: 2,
 };
 
 export const PLANS = {

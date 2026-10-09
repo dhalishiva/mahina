@@ -84,7 +84,7 @@ export function SignupForm() {
   return (
     <div>
       <h1 className="font-display text-3xl font-extrabold tracking-tight">Start your free register</h1>
-      <p className="mt-2 text-muted">Free for up to 15 members. No card needed.</p>
+      <p className="mt-2 text-muted">Free for up to 2 members. No card needed.</p>
       <form onSubmit={submit} className="mt-8 space-y-4">
         <Field label="Your name" name="name" required autoComplete="name" maxLength={80} />
         <Field label="Email" name="email" type="email" required autoComplete="email" maxLength={120} defaultValue={email} />

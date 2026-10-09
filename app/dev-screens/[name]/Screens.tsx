@@ -3,6 +3,7 @@ import { FixtureProvider, type Profile } from "@/lib/store";
 import { AppShell } from "@/components/app/AppShell";
 import { DashboardView, MemberDetailView, MembersView } from "@/components/app/views";
 import { ReminderComposer } from "@/components/app/sheets";
+import { BillingView } from "@/components/app/views2";
 import { computeStatus, istToday, periodKey, type Member, type Payment } from "@/lib/dues";
 
 const t = istToday();
@@ -12,7 +13,7 @@ const day = (p: string, d: number) => p.slice(0, 8) + String(d).padStart(2, "0")
 const profile: Profile = {
   id: "u1", email: "ramesh@example.com", full_name: "Ramesh Sharma", business_name: "Sharma Tuition Classes", business_type: "Home tuition",
   phone: "98100 12345", upi_id: "sharma.tuitions@okaxis", upi_name: "Ramesh Sharma", reminder_lang: "hinglish", plan: "pro",
-  plan_expires_at: "2027-10-01T00:00:00Z", is_admin: false, created_at: "2026-04-01T00:00:00Z",
+  plan_expires_at: "2027-10-01T00:00:00Z", subscription_id: null, subscription_status: null, is_admin: false, created_at: "2026-04-01T00:00:00Z",
 };
 
 const raw: [string, string, number, string, number, number][] = [
@@ -53,6 +54,7 @@ export function Screens({ name }: { name: string }) {
     <FixtureProvider profile={profile} members={members} payments={payments}>
       {name === "dashboard" && <AppShell active="/app"><DashboardView /></AppShell>}
       {name === "members" && <AppShell active="/app/members"><MembersView /></AppShell>}
+      {name === "billing" && <AppShell active="/app/billing"><BillingView /></AppShell>}
       {name === "member" && <AppShell active="/app/members"><MemberDetailView id="m3" /></AppShell>}
       {name === "reminder" && (
         <AppShell active="/app/members">

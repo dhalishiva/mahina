@@ -59,7 +59,7 @@ export default function Guide() {
         <p>A receipt after every payment builds trust and ends the &ldquo;I already paid last month&rdquo; argument before it starts.</p>
 
         <h2>Let a tool do the remembering</h2>
-        <p><Link href="/">Mahina</Link> keeps a register of who has paid each month, writes these reminders with the right name, month and amount, adds a UPI payment link, and sends receipts. It&apos;s free for up to 15 members.</p>
+        <p><Link href="/">Mahina</Link> keeps a register of who has paid each month, writes these reminders with the right name, month and amount, adds a UPI payment link, and sends receipts. It&apos;s free to try with up to 2 members.</p>
       </div>
     </article>
   );

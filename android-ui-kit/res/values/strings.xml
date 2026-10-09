@@ -19,7 +19,7 @@
     <string name="login_title">Welcome back</string>
     <string name="login_sub">Log in to your fee register.</string>
     <string name="signup_title">Start your free register</string>
-    <string name="signup_sub">Free for up to 15 members. No card needed.</string>
+    <string name="signup_sub">Free for up to 2 members. No card needed.</string>
     <string name="field_name">Your name</string>
     <string name="field_email">Email</string>
     <string name="field_password">Password</string>
@@ -75,7 +75,7 @@
 
     <!-- Members -->
     <string name="members_title">Members</string>
-    <string name="members_sub_free">%1$d active · %2$d of 15 on the free plan</string>
+    <string name="members_sub_free">%1$d active · %2$d of 2 on the free plan</string>
     <string name="search_members">Search name, phone or batch</string>
     <string name="filter_all">All</string>
     <string name="filter_due">Owes money</string>
@@ -87,7 +87,7 @@
     <string name="member_row_sub">%1$s/mo · due %2$s</string>
     <string name="empty_register_title">Your register is empty.</string>
     <string name="empty_register_body">Add the people who pay you every month. You can paste a whole batch at once.</string>
-    <string name="free_limit_reached">You\'ve reached 15 members on the free plan.</string>
+    <string name="free_limit_reached">You\'ve reached 2 members on the free plan.</string>
     <string name="action_upgrade">Upgrade to Pro, ₹149/month</string>
 
     <!-- Member form -->
@@ -168,16 +168,26 @@
     <!-- Plan -->
     <string name="plan_title">Your plan</string>
     <string name="plan_pro_until">Pro until %1$s</string>
-    <string name="plan_free_usage">Free plan · %1$d of 15 members used</string>
-    <string name="plan_monthly">Pro monthly</string>
-    <string name="plan_yearly">Pro yearly</string>
-    <string name="plan_yearly_note">₹124 a month, two months free</string>
+    <string name="plan_free_usage">Free plan · %1$d of 2 members used</string>
+    <string name="plan_monthly">Pro monthly · autopay</string>
+    <string name="plan_monthly_note">Charged automatically every month. Turn off anytime.</string>
+    <string name="plan_autopay_on">Pro · autopay on · renews %1$s</string>
+    <string name="action_start_autopay">Start autopay</string>
+    <string name="autopay_is_on">Autopay is on</string>
+    <string name="action_turn_off_autopay">Turn off autopay</string>
+    <string name="autopay_off_confirm">Stop future charges? Pro stays active until %1$s.</string>
+    <string name="autopay_off_done">Autopay is off. You won\'t be charged again, and Pro stays active until %1$s.</string>
+    <string name="autopay_started">Autopay is on and Pro is active. We\'ll charge ₹149 every month until you turn it off.</string>
+    <string name="plan_feature_autopay">UPI autopay or card</string>
+    <string name="plan_yearly">Pro yearly · one-time</string>
+    <string name="plan_yearly_note">₹124 a month, two months free. Doesn\'t renew on its own.</string>
     <string name="plan_feature_unlimited">Unlimited members</string>
     <string name="plan_feature_support">Priority email support</string>
-    <string name="plan_feature_no_renew">No auto-renewal</string>
+    <string name="plan_feature_no_renew">Pay once, no mandate</string>
     <string name="action_upgrade_short">Upgrade</string>
-    <string name="action_extend">Extend Pro</string>
-    <string name="plan_footer">Pay with UPI, card or net banking through Razorpay. Pro is prepaid and doesn\'t renew on its own.</string>
+    <string name="action_extend">Add a year</string>
+    <string name="action_buy_year">Buy a year</string>
+    <string name="plan_footer">Payments are handled by Razorpay. Autopay charges ₹149 each month until you turn it off; Pro stays active until the end of the paid month. A yearly purchase adds 12 months.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -192,6 +202,6 @@
 
     <!-- Errors -->
     <string name="err_network">Couldn\'t reach Mahina. Check your internet and try again.</string>
-    <string name="err_free_limit">The free plan allows up to 15 members. Upgrade to Pro to add more.</string>
+    <string name="err_free_limit">The free plan allows up to 2 members. Upgrade to Pro to add more.</string>
     <string name="err_phone">Enter a valid phone number (10 digits).</string>
 </resources>

@@ -18,7 +18,7 @@ export default function TwitterImage() {
             </div>
           </div>
           <div style={{ fontSize: 64, fontWeight: 800, lineHeight: 1.05, letterSpacing: -2 }}>Get every month&apos;s fees on time, without asking twice.</div>
-          <div style={{ fontSize: 26, opacity: 0.8 }}>WhatsApp reminders · UPI payment links · Receipts · Free for 15 members</div>
+          <div style={{ fontSize: 26, opacity: 0.8 }}>WhatsApp reminders · UPI payment links · Receipts · Free for 2 members</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", flex: 0.75, marginLeft: 48, background: "white", borderRadius: 28, padding: "32px 32px 32px 56px", color: "#161a2c", borderLeft: "6px solid #e3474f" }}>
           <span style={{ fontSize: 28, color: "#2433A6", marginBottom: 16 }}>October fees</span>

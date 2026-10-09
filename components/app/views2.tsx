@@ -91,34 +91,31 @@ function loadRazorpay() {
 
 export function BillingView() {
   const { profile, isPro, loading, members, reload } = useStore();
-  const [busy, setBusy] = useState<PlanCode | null>(null);
+  const [busy, setBusy] = useState<"autopay" | "yearly" | "cancel" | null>(null);
+  const [confirmOff, setConfirmOff] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "error" | "info"; text: string } | null>(null);
   if (loading || !profile) return <Loading />;
   const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  const autopayOn = !!profile.subscription_id && ["active", "authenticated", "pending"].includes(profile.subscription_status || "");
+  const exp = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null;
+  const expText = exp?.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 
-  async function buy(plan: PlanCode) {
-    setMsg(null);
-    if (!keyId) { setMsg({ kind: "info", text: "Online payments are being set up. Write to us from the contact page and we'll activate Pro for you." }); return; }
-    setBusy(plan);
+  type Success = { razorpay_payment_id: string; razorpay_signature: string; razorpay_order_id?: string; razorpay_subscription_id?: string };
+  async function checkout(kind: "autopay" | "yearly", opts: Record<string, unknown>) {
     const ok = await loadRazorpay();
-    const res = await fetch("/api/billing/order", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ plan }) });
-    const order = await res.json().catch(() => ({}));
-    if (!ok || !res.ok) { setBusy(null); setMsg({ kind: "error", text: order.error || "Couldn't start checkout. Try again." }); return; }
+    if (!ok) { setBusy(null); setMsg({ kind: "error", text: "Couldn't load the payment window. Check your connection and try again." }); return; }
     const rz = new window.Razorpay!({
       key: keyId,
-      order_id: order.id,
-      amount: order.amount,
-      currency: "INR",
       name: "Mahina by SlotRecover",
-      description: PLANS[plan].label,
       image: `${location.origin}/icon-192.png`,
       prefill: { email: profile!.email || "", name: profile!.full_name || "", contact: profile!.phone || "" },
       theme: { color: "#2433A6" },
-      handler: async (r: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+      ...opts,
+      handler: async (r: Success) => {
         const v = await fetch("/api/billing/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(r) });
         setBusy(null);
-        if (v.ok) { setMsg({ kind: "ok", text: "Payment received. Pro is active." }); await reload(); }
-        else setMsg({ kind: "error", text: `Payment received but activation failed. Contact us with payment ID ${r.razorpay_payment_id}.` });
+        if (v.ok) { setMsg({ kind: "ok", text: kind === "autopay" ? (isPro && expText ? `Autopay is set up. Your Pro continues as is, and the first ₹149 charge will be around ${expText}.` : "Autopay is on and Pro is active. We'll charge ₹149 every month until you turn it off.") : "Payment received. Pro is active for a year." }); await reload(); }
+        else setMsg({ kind: "error", text: `Payment received but activation is taking a while. Refresh in a minute, or contact us with payment ID ${r.razorpay_payment_id}.` });
       },
       modal: { ondismiss: () => setBusy(null) },
     });
@@ -126,31 +123,79 @@ export function BillingView() {
     rz.open();
   }
 
-  const exp = profile.plan_expires_at ? new Date(profile.plan_expires_at) : null;
+  async function start(kind: "autopay" | "yearly") {
+    setMsg(null);
+    if (!keyId) { setMsg({ kind: "info", text: "Online payments are being set up. Write to us from the contact page and we'll activate Pro for you." }); return; }
+    setBusy(kind);
+    const res = await fetch(kind === "autopay" ? "/api/billing/subscribe" : "/api/billing/order", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ plan: "pro_yearly" }),
+    });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) { setBusy(null); setMsg({ kind: "error", text: d.error || "Couldn't start checkout. Try again." }); return; }
+    if (kind === "autopay") await checkout(kind, { subscription_id: d.subscription_id, description: "Pro · ₹149 every month" });
+    else await checkout(kind, { order_id: d.id, amount: d.amount, currency: "INR", description: PLANS.pro_yearly.label });
+  }
+
+  async function turnOff() {
+    setBusy("cancel"); setMsg(null);
+    const res = await fetch("/api/billing/cancel", { method: "POST" });
+    const d = await res.json().catch(() => ({}));
+    setBusy(null); setConfirmOff(false);
+    if (!res.ok) { setMsg({ kind: "error", text: d.error || "Couldn't turn off autopay. Try again." }); return; }
+    setMsg({ kind: "ok", text: `Autopay is off. You won't be charged again${expText ? `, and Pro stays active until ${expText}` : ""}.` });
+    await reload();
+  }
+
+  const sub = isPro
+    ? `Pro${autopayOn ? " · autopay on" : ""} · ${autopayOn ? "renews" : "active until"} ${expText}`
+    : `Free plan · ${members.length} of ${SITE.freeLimit} members used`;
+
   return (
     <>
-      <PageTitle title="Your plan" sub={isPro ? `Pro until ${exp?.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}` : `Free plan · ${members.length} of ${SITE.freeLimit} members used`} />
+      <PageTitle title="Your plan" sub={sub} />
       {msg && <div className="mb-5 max-w-3xl"><Alert kind={msg.kind}>{msg.text}</Alert></div>}
       <div className="grid max-w-3xl gap-4 sm:grid-cols-2">
-        {(Object.keys(PLANS) as PlanCode[]).map((code) => {
-          const p = PLANS[code];
-          return (
-            <div key={code} className={`rounded-2xl p-6 ${code === "pro_yearly" ? "bg-ink text-white" : "bg-white ring-1 ring-line"}`}>
-              <p className={code === "pro_yearly" ? "text-white/75" : "text-muted"}>{p.label}</p>
-              <p className="mt-1 font-display text-4xl font-extrabold">₹{p.rupees.toLocaleString("en-IN")}</p>
-              <p className={`text-sm ${code === "pro_yearly" ? "text-white/75" : "text-muted"}`}>{code === "pro_yearly" ? "₹124 a month, two months free" : "for 1 month"}</p>
-              <ul className={`mt-4 space-y-1.5 text-sm ${code === "pro_yearly" ? "text-white/90" : ""}`}>
-                <li>Unlimited members</li><li>Priority email support</li><li>No auto-renewal</li>
-              </ul>
-              <button onClick={() => buy(code)} disabled={!!busy}
-                className={`mt-5 w-full rounded-xl px-4 py-3 font-semibold disabled:opacity-60 ${code === "pro_yearly" ? "bg-white text-ink" : "bg-ink text-white"}`}>
-                {busy === code ? "Opening checkout…" : isPro ? "Extend Pro" : "Upgrade"}
-              </button>
-            </div>
-          );
-        })}
+        <div className="rounded-2xl bg-ink p-6 text-white">
+          <p className="text-white/75">Pro monthly · autopay</p>
+          <p className="mt-1 font-display text-4xl font-extrabold">₹{PLANS.pro_monthly.rupees}<span className="text-lg font-semibold text-white/75"> / month</span></p>
+          <p className="text-sm text-white/75">Charged automatically every month. Turn off anytime.</p>
+          <ul className="mt-4 space-y-1.5 text-sm text-white/90">
+            <li>Unlimited members</li><li>Priority email support</li><li>UPI autopay or card</li>
+          </ul>
+          {autopayOn ? (
+            confirmOff ? (
+              <div className="mt-5 rounded-xl bg-white/10 p-3 text-sm">
+                <p>Stop future charges? Pro stays active until {expText}.</p>
+                <div className="mt-3 flex gap-2">
+                  <button onClick={turnOff} disabled={!!busy} className="flex-1 rounded-lg bg-white px-3 py-2 font-semibold text-due disabled:opacity-60">{busy === "cancel" ? "Turning off…" : "Turn off"}</button>
+                  <button onClick={() => setConfirmOff(false)} className="flex-1 rounded-lg px-3 py-2 font-semibold ring-1 ring-white/40">Keep it</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="mt-5 rounded-xl bg-white/10 px-4 py-3 text-center font-semibold">Autopay is on</p>
+                <button onClick={() => setConfirmOff(true)} className="mt-2 w-full text-sm text-white/80 underline">Turn off autopay</button>
+              </>
+            )
+          ) : (
+            <button onClick={() => start("autopay")} disabled={!!busy} className="mt-5 w-full rounded-xl bg-white px-4 py-3 font-semibold text-ink disabled:opacity-60">
+              {busy === "autopay" ? "Opening checkout…" : "Start autopay"}
+            </button>
+          )}
+        </div>
+        <div className="rounded-2xl bg-white p-6 ring-1 ring-line">
+          <p className="text-muted">{PLANS.pro_yearly.label} · one-time</p>
+          <p className="mt-1 font-display text-4xl font-extrabold">₹{PLANS.pro_yearly.rupees.toLocaleString("en-IN")}<span className="text-lg font-semibold text-muted"> / year</span></p>
+          <p className="text-sm text-muted">₹124 a month, two months free. Doesn&apos;t renew on its own.</p>
+          <ul className="mt-4 space-y-1.5 text-sm">
+            <li>Unlimited members</li><li>Priority email support</li><li>Pay once, no mandate</li>
+          </ul>
+          <button onClick={() => start("yearly")} disabled={!!busy} className="mt-5 w-full rounded-xl bg-ink px-4 py-3 font-semibold text-white disabled:opacity-60">
+            {busy === "yearly" ? "Opening checkout…" : isPro ? "Add a year" : "Buy a year"}
+          </button>
+        </div>
       </div>
-      <p className="mt-6 max-w-3xl text-sm text-muted">Pay with UPI, card or net banking through Razorpay. Pro is prepaid and doesn&apos;t renew on its own. Extending adds time to your current plan. See the <Link href="/refund-policy" className="underline">refund policy</Link>.</p>
+      <p className="mt-6 max-w-3xl text-sm text-muted">Payments are handled by Razorpay. With autopay you approve a UPI autopay mandate or card once, and ₹149 is charged each month; you can turn it off here at any time and Pro stays active until the end of the month you&apos;ve paid for. A yearly purchase adds 12 months to your current plan. See the <Link href="/refund-policy" className="underline">cancellation and refund policy</Link>.</p>
     </>
   );
 }
