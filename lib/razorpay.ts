@@ -94,7 +94,7 @@ export async function autopayPlanId() {
   return plan.id;
 }
 
-export type RzSubscription = { id: string; plan_id: string; status: string; current_end: number | null; charge_at: number | null; notes: { user_id?: string } };
+export type RzSubscription = { id: string; plan_id: string; status: string; current_end: number | null; charge_at: number | null; start_at?: number | null; notes: { user_id?: string } };
 type RzPayment = { id: string; order_id: string | null; amount: number; status: string; subscription_id?: string };
 
 export async function getAutopay(userId: string) {
