@@ -23,7 +23,7 @@ export function ReminderComposer({ st, onSent }: { st: MemberStatus; onSent?: ()
   const [lang, setLang] = useState<Lang>(profile?.reminder_lang || "hinglish");
   const [tone, setTone] = useState<Tone>(st.dueMonths > 1 ? "firm" : "gentle");
   const { amount, months } = reminderPieces(st);
-  const link = `${origin}/p/${st.member.pay_token}`;
+  const link = `${origin}/p/${st.member.pay_code}`;
   const text = reminderText(lang, { name: st.member.name, business: profile?.business_name || profile?.full_name || "Your tutor", amount: inr(amount), months, link, tone });
   const num = waNumber(st.member.phone);
 
@@ -99,7 +99,7 @@ function PaymentForm({ st, period, onClose }: { st: MemberStatus; period?: strin
   const today = `${t.y}-${String(t.m).padStart(2, "0")}-${String(t.d).padStart(2, "0")}`;
 
   if (saved) {
-    const link = `${origin}/r/${saved.receipt_token}`;
+    const link = `${origin}/r/${saved.receipt_code}`;
     const txt = receiptText({ business: profile?.business_name || "Payment", name: st.member.name, amount: inr(saved.amount), months: monthLabel(saved.period, "long"), link });
     return (
       <div className="space-y-4">

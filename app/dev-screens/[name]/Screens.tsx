@@ -38,12 +38,12 @@ const payments: Payment[] = [];
 let rn = 1001;
 raw.forEach(([name, batch, fee, phone, since, unpaid], i) => {
   const id = "m" + i;
-  members.push({ id, name, phone, monthly_fee: fee, due_day: 5, batch, start_month: back(since), active: true, notes: null, pay_token: `7f3c9a12-4b8e-4d21-9c5a-2e8f6b1d0a${i.toString(16).padStart(2, "0")}`, created_at: "" });
+  members.push({ id, name, phone, monthly_fee: fee, due_day: 5, batch, start_month: back(since), active: true, notes: null, pay_token: `7f3c9a12-4b8e-4d21-9c5a-2e8f6b1d0a${i.toString(16).padStart(2, "0")}`, pay_code: `Kp7qXm${String.fromCharCode(65 + i)}2`, created_at: "" });
   for (let k = since; k >= 0; k--) {
     if (k < unpaid) continue; // the most recent `unpaid` months stay unpaid
     if (k === 0 && i % 4 === 3) continue; // a few haven't paid this month yet
     const p = back(k);
-    payments.push({ id: `p${i}-${k}`, member_id: id, period: p, amount: fee, method: (i + k) % 4 === 0 ? "cash" : "upi", paid_on: day(p, Math.min(28, 2 + ((i + k) % 7))), note: null, receipt_no: rn++, receipt_token: "x", created_at: "" });
+    payments.push({ id: `p${i}-${k}`, member_id: id, period: p, amount: fee, method: (i + k) % 4 === 0 ? "cash" : "upi", paid_on: day(p, Math.min(28, 2 + ((i + k) % 7))), note: null, receipt_no: rn++, receipt_token: "x", receipt_code: "Rc8vNw3T", created_at: "" });
   }
 });
 payments.sort((a, b) => (a.paid_on < b.paid_on ? 1 : -1));

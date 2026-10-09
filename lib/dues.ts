@@ -9,6 +9,7 @@ export type Member = {
   active: boolean;
   notes: string | null;
   pay_token: string;
+  pay_code: string;
   created_at: string;
 };
 
@@ -22,6 +23,7 @@ export type Payment = {
   note: string | null;
   receipt_no: number;
   receipt_token: string;
+  receipt_code: string;
   created_at: string;
 };
 

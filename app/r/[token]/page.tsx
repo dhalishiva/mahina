@@ -9,12 +9,16 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Payment receipt", robots: { index: false, follow: false }, referrer: "no-referrer" };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const CODE = /^[A-Za-z0-9]{6,12}$/;
 type R = { receipt_no: number; amount: number; period: string; paid_on: string; method: string; member_name: string; business_name: string | null; business_phone: string | null };
 
 export default async function Receipt({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  if (!UUID.test(token)) notFound();
-  const { data } = await supabaseAnon().rpc("get_receipt", { p_token: token });
+  const { data } = UUID.test(token)
+    ? await supabaseAnon().rpc("get_receipt", { p_token: token })
+    : CODE.test(token)
+      ? await supabaseAnon().rpc("get_receipt_by_code", { p_code: token })
+      : { data: null };
   if (!data) notFound();
   const r = data as R;
   const [y, m] = r.period.split("-").map(Number);

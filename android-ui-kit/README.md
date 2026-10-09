@@ -99,7 +99,7 @@ Port `lib/dues.ts` exactly.
   - the member's first name,
   - the months: due months as short names, comma-joined; if more than 3, write "Sep to Dec"; if nothing is due, use the current month,
   - the amount: outstanding, or the monthly fee if nothing is due,
-  - the pay link: `https://mahina.kriosity.in/p/{members.pay_token}`.
+  - the pay link: `https://mahina.kriosity.in/p/{members.pay_code}`.
 - **Phone numbers for WhatsApp:** strip non-digits. If 10 digits, prefix `91`. If 12 digits starting with `91`, keep as is. If 11 digits starting with `0`, replace the `0` with `91`.
 
 ### WhatsApp intent
@@ -108,7 +108,7 @@ Open `https://wa.me/{number}?text={urlencoded}` with `Intent.ACTION_VIEW`. This 
 
 ### Receipt
 
-After recording a payment, send the `tpl_receipt` text with the link `https://mahina.kriosity.in/r/{payments.receipt_token}`.
+After recording a payment, send the `tpl_receipt` text with the link `https://mahina.kriosity.in/r/{payments.receipt_code}`.
 
 ## Backend contract (Supabase)
 
@@ -131,7 +131,7 @@ Row-level security limits every query to the signed-in user's own rows.
 | --- | --- | --- |
 | `profiles` | id, email, full_name, business_name, business_type, phone, upi_id, upi_name, reminder_lang (`en` \| `hi` \| `hinglish`), plan (`free` \| `pro`), plan_expires_at, is_admin, created_at | Read. Update only full_name, business_name, business_type, phone, upi_id, upi_name, reminder_lang. |
 | `members` | id, owner_id, name, phone, monthly_fee, due_day (1–28), batch, start_month (date, 1st of month), active, notes, pay_token, created_at | Full CRUD. `owner_id` defaults to `auth.uid()`. Inserting beyond 15 on free raises `FREE_LIMIT`. |
-| `payments` | id, owner_id, member_id, period (date, 1st of month), amount, method (`upi` \| `cash` \| `bank` \| `other`), paid_on, note, receipt_no, receipt_token, created_at | Full CRUD. Insert returns `receipt_no` and `receipt_token`. |
+| `payments` | id, owner_id, member_id, period (date, 1st of month), amount, method (`upi` \| `cash` \| `bank` \| `other`), paid_on, note, receipt_no, receipt_token, receipt_code, created_at | Full CRUD. Insert returns `receipt_no` and `receipt_code` (8-character short code used in receipt links). |
 | `billing_orders` | id, user_id, razorpay_order_id, razorpay_payment_id, plan_code, amount_paise, status, created_at | Read only. |
 | `support_messages` | name, email, topic, message | Insert only (the contact form). |
 

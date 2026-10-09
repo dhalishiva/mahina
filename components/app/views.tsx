@@ -305,7 +305,7 @@ export function MemberDetailView({ id }: { id: string }) {
                   <p className="truncate text-sm text-muted">#{p.receipt_no} · {p.method.toUpperCase()} · {new Date(p.paid_on + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}{p.note ? ` · ${p.note}` : ""}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
-                  <a href={`${origin}/r/${p.receipt_token}`} target="_blank" rel="noopener noreferrer" className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-ink hover:bg-ink-soft">Receipt</a>
+                  <a href={`${origin}/r/${p.receipt_code}`} target="_blank" rel="noopener noreferrer" className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-ink hover:bg-ink-soft">Receipt</a>
                   <button onClick={async () => { if (confirm("Delete this payment? The month will show as unpaid again.")) await deletePayment(p.id); }} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-muted hover:text-due" aria-label={`Delete payment of ${inr(p.amount)}`}>Delete</button>
                 </div>
               </li>
