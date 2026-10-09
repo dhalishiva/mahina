@@ -2,7 +2,7 @@ export const SITE = {
   name: "Mahina",
   byline: "by SlotRecover",
   fullName: "Mahina by SlotRecover",
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://mahina-murex.vercel.app").replace(/\/$/, ""),
+  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://mahina.kriosity.in").replace(/\/$/, ""),
   tagline: "Monthly fee collection on WhatsApp and UPI",
   description:
     "Mahina helps tuition teachers, tiffin services, gyms, yoga and music classes collect monthly fees on time. Send WhatsApp fee reminders with a UPI payment link, track who has paid, and share receipts. Free for up to 15 members.",

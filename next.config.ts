@@ -30,6 +30,17 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  async redirects() {
+    // One canonical domain for SEO. API routes are left alone so webhooks keep working on either host.
+    return [
+      {
+        source: "/:path((?!api/).*)",
+        has: [{ type: "host", value: "mahina-murex.vercel.app" }],
+        destination: "https://mahina.kriosity.in/:path",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

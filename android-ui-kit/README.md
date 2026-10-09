@@ -1,6 +1,6 @@
 # Mahina Android UI kit
 
-Everything needed to build the native Android app for **Mahina by SlotRecover**. The app talks to the same Supabase backend as the web app at `mahina-murex.vercel.app`.
+Everything needed to build the native Android app for **Mahina by SlotRecover**. The app talks to the same Supabase backend as the web app at `mahina.kriosity.in`.
 
 **Target stack:** Kotlin, Jetpack Compose, Material 3, min SDK 26, `supabase-kt`, Ktor.
 
@@ -99,7 +99,7 @@ Port `lib/dues.ts` exactly.
   - the member's first name,
   - the months: due months as short names, comma-joined; if more than 3, write "Sep to Dec"; if nothing is due, use the current month,
   - the amount: outstanding, or the monthly fee if nothing is due,
-  - the pay link: `https://mahina-murex.vercel.app/p/{members.pay_token}`.
+  - the pay link: `https://mahina.kriosity.in/p/{members.pay_token}`.
 - **Phone numbers for WhatsApp:** strip non-digits. If 10 digits, prefix `91`. If 12 digits starting with `91`, keep as is. If 11 digits starting with `0`, replace the `0` with `91`.
 
 ### WhatsApp intent
@@ -108,7 +108,7 @@ Open `https://wa.me/{number}?text={urlencoded}` with `Intent.ACTION_VIEW`. This 
 
 ### Receipt
 
-After recording a payment, send the `tpl_receipt` text with the link `https://mahina-murex.vercel.app/r/{payments.receipt_token}`.
+After recording a payment, send the `tpl_receipt` text with the link `https://mahina.kriosity.in/r/{payments.receipt_token}`.
 
 ## Backend contract (Supabase)
 
@@ -149,7 +149,7 @@ Row-level security limits every query to the signed-in user's own rows.
 
 Do **not** verify payments in the app. The flow:
 
-1. Call `POST https://mahina-murex.vercel.app/api/billing/order` with body `{ "plan": "pro_monthly" | "pro_yearly" }`. Send the header `Authorization: Bearer <supabase access_token>`.
+1. Call `POST https://mahina.kriosity.in/api/billing/order` with body `{ "plan": "pro_monthly" | "pro_yearly" }`. Send the header `Authorization: Bearer <supabase access_token>`.
 2. Open Razorpay Checkout using the returned `order_id`.
 3. Send the success payload to `POST /api/billing/verify`.
 4. Refresh the profile.
