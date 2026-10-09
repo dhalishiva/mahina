@@ -14,8 +14,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...SEGMENTS.map((s) => page(`/for/${s.slug}`, 0.8)),
     page("/help", 0.6),
     page("/contact", 0.5),
-    page("/signup", 0.6),
-    page("/login", 0.3),
     page("/privacy", 0.3, "yearly"),
     page("/terms", 0.3, "yearly"),
     page("/refund-policy", 0.3, "yearly"),
