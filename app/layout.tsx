@@ -45,6 +45,14 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "Mahina by SlotRecover", description: SITE.tagline },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   category: "business",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
   formatDetection: { telephone: false },
 };
 

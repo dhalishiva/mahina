@@ -64,7 +64,7 @@ export default function Home() {
             Mahina is the fee register for tutors, tiffin services, gyms and classes. It shows who hasn&apos;t paid, sends them a polite WhatsApp reminder with your UPI QR, and gives them a receipt when they do.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/signup" className="rounded-xl bg-ink px-6 py-3.5 text-lg font-semibold text-white shadow-sm hover:bg-ink-dark">
+            <Link href="/signup" target="_blank" rel="noopener" className="rounded-xl bg-ink px-6 py-3.5 text-lg font-semibold text-white shadow-sm hover:bg-ink-dark">
               Start free
             </Link>
             <Link href="#how" className="rounded-xl px-5 py-3.5 text-lg font-semibold text-ink hover:bg-ink-soft">
@@ -183,7 +183,7 @@ export default function Home() {
       <section className="mx-auto mt-24 max-w-3xl px-4 text-center sm:px-6">
         <h2 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Next month, let the register fill itself.</h2>
         <p className="mx-auto mt-4 max-w-lg text-lg text-muted">Set up your first batch in under five minutes. Free, with no card needed.</p>
-        <Link href="/signup" className="mt-8 inline-block rounded-xl bg-ink px-7 py-4 text-lg font-semibold text-white hover:bg-ink-dark">Create your free register</Link>
+        <Link href="/signup" target="_blank" rel="noopener" className="mt-8 inline-block rounded-xl bg-ink px-7 py-4 text-lg font-semibold text-white hover:bg-ink-dark">Create your free register</Link>
       </section>
     </>
   );

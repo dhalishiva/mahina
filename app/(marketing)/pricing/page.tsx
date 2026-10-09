@@ -32,13 +32,13 @@ export default function Pricing() {
             <h2 className="font-display text-2xl font-bold">Free</h2>
             <p className="mt-3 font-display text-5xl font-extrabold">₹0</p>
             <p className="mt-2 text-muted">For a single batch or a small side business.</p>
-            <Link href="/signup" className="mt-6 inline-block rounded-xl border-2 border-ink px-5 py-3 font-semibold text-ink hover:bg-ink-soft">Start free</Link>
+            <Link href="/signup" target="_blank" rel="noopener" className="mt-6 inline-block rounded-xl border-2 border-ink px-5 py-3 font-semibold text-ink hover:bg-ink-soft">Start free</Link>
           </div>
           <div className="rounded-3xl bg-ink p-8 text-white">
             <h2 className="font-display text-2xl font-bold">Pro</h2>
             <p className="mt-3 font-display text-5xl font-extrabold">₹149<span className="text-lg font-semibold text-white/70"> / month</span></p>
             <p className="mt-2 text-white/80">Or ₹1,490 a year. That&apos;s two months free.</p>
-            <Link href="/signup?plan=pro" className="mt-6 inline-block rounded-xl bg-white px-5 py-3 font-semibold text-ink hover:bg-ink-soft">Start free, upgrade anytime</Link>
+            <Link href="/signup?plan=pro" target="_blank" rel="noopener" className="mt-6 inline-block rounded-xl bg-white px-5 py-3 font-semibold text-ink hover:bg-ink-soft">Start free, upgrade anytime</Link>
           </div>
         </div>
 

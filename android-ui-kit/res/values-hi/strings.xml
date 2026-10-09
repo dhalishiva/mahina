@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hindi UI strings. Reminder templates are language-selected per message, so they live only in values/strings.xml. -->
+<resources>
+    <string name="onb1_title">हर महीने की फीस समय पर</string>
+    <string name="onb1_body">हर महीने किसने भुगतान किया और किसने नहीं, सब एक रजिस्टर में।</string>
+    <string name="onb2_title">बिना झिझक के याद दिलाएँ</string>
+    <string name="onb2_body">एक टैप में WhatsApp पर हिंदी या अंग्रेज़ी में विनम्र रिमाइंडर और आपका UPI पेमेंट लिंक।</string>
+    <string name="onb3_title">पैसा सीधे आपके खाते में</string>
+    <string name="onb3_body">सदस्य सीधे आपकी UPI ID पर भुगतान करते हैं। कोई कमीशन नहीं।</string>
+    <string name="onb_next">आगे</string>
+    <string name="onb_start">मुफ़्त शुरू करें</string>
+    <string name="onb_have_account">मेरा खाता पहले से है</string>
+
+    <string name="login_title">फिर से स्वागत है</string>
+    <string name="login_sub">अपने फीस रजिस्टर में लॉग इन करें।</string>
+    <string name="signup_title">अपना मुफ़्त रजिस्टर शुरू करें</string>
+    <string name="signup_sub">15 सदस्यों तक मुफ़्त। कार्ड की ज़रूरत नहीं।</string>
+    <string name="field_name">आपका नाम</string>
+    <string name="field_email">ईमेल</string>
+    <string name="field_password">पासवर्ड</string>
+    <string name="action_login">लॉग इन करें</string>
+    <string name="action_create_account">मुफ़्त खाता बनाएँ</string>
+
+    <string name="nav_home">होम</string>
+    <string name="nav_members">सदस्य</string>
+    <string name="nav_plan">प्लान</string>
+    <string name="nav_settings">सेटिंग्स</string>
+
+    <string name="stat_collected">इस महीने मिला</string>
+    <string name="stat_pending">बाकी</string>
+    <string name="stat_paid_count">इस महीने भुगतान किया</string>
+    <string name="to_remind">याद दिलाना है</string>
+    <string name="recent_payments">हाल के भुगतान</string>
+
+    <string name="members_title">सदस्य</string>
+    <string name="action_add_member">सदस्य जोड़ें</string>
+    <string name="action_add_several">कई जोड़ें</string>
+    <string name="filter_all">सभी</string>
+    <string name="filter_due">बाकी है</string>
+    <string name="filter_paid">इस महीने भुगतान</string>
+    <string name="filter_inactive">निष्क्रिय</string>
+
+    <string name="field_fee">मासिक फीस (₹)</string>
+    <string name="field_due_day">देय तारीख</string>
+    <string name="field_batch">बैच या ग्रुप</string>
+
+    <string name="stat_outstanding">बाकी राशि</string>
+    <string name="month_by_month">महीनेवार</string>
+    <string name="status_paid">भुगतान हुआ</string>
+    <string name="status_due">बाकी</string>
+    <string name="status_upcoming">आने वाला</string>
+    <string name="action_remind">याद दिलाएँ</string>
+    <string name="action_record_payment">भुगतान दर्ज करें</string>
+    <string name="action_mark_paid">भुगतान हुआ</string>
+    <string name="action_open_whatsapp">WhatsApp खोलें</string>
+    <string name="action_copy_message">संदेश कॉपी करें</string>
+    <string name="action_send_receipt">WhatsApp पर रसीद भेजें</string>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_done">हो गया</string>
+
+    <string name="method_cash">नकद</string>
+    <string name="method_bank">बैंक</string>
+    <string name="method_other">अन्य</string>
+
+    <string name="plan_title">आपका प्लान</string>
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="where_members_pay">सदस्य कहाँ भुगतान करें</string>
+    <string name="action_sign_out">लॉग आउट</string>
+
+    <string name="err_network">Mahina से कनेक्ट नहीं हो पाया। इंटरनेट जाँचें और फिर कोशिश करें।</string>
+</resources>

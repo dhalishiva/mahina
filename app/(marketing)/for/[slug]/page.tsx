@@ -51,7 +51,7 @@ export default async function SegmentPage({ params }: { params: Promise<{ slug: 
             <h1 className="font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl">{s.h1}</h1>
             <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-muted">{s.intro}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/signup" className="rounded-xl bg-ink px-6 py-3.5 font-semibold text-white hover:bg-ink-dark">Start free for {SITE.freeLimit} {s.memberWord}s</Link>
+              <Link href="/signup" target="_blank" rel="noopener" className="rounded-xl bg-ink px-6 py-3.5 font-semibold text-white hover:bg-ink-dark">Start free for {SITE.freeLimit} {s.memberWord}s</Link>
               <Link href="/pricing" className="rounded-xl px-5 py-3.5 font-semibold text-ink hover:bg-ink-soft">See pricing</Link>
             </div>
           </div>

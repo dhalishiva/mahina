@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mahina Android UI kit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face { font-family: Bricolage; src: url(../assets/fonts/bricolage_grotesque_variable.ttf); font-weight: 200 800; }
+@font-face { font-family: Hanken; src: url(../assets/fonts/hanken_grotesk_variable.ttf); font-weight: 100 900; }
+@font-face { font-family: Kalam; src: url(../assets/fonts/kalam_regular_latin.ttf); }
+:root {
+  --ink:#2433A6; --ink-dark:#1A2580; --ink-soft:#EEF1FF; --ink-light:#C9D3FF;
+  --paid:#0E7A4E; --paid-soft:#E4F4EC; --due:#C2410C; --due-soft:#FDEEE4;
+  --margin:#E3474F; --rule:#D9E3F2; --text:#161A2C; --muted:#5B6178;
+  --surface:#F5F7FB; --card:#FFFFFF; --line:#E3E7F0; --wa:#25D366; --on-wa:#0B3D20; --bubble:#D9FDD3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #dfe3ec; font-family: Hanken, sans-serif; color: var(--text); padding: 40px; display: flex; flex-wrap: wrap; gap: 48px; }
+.frame { width: 360px; flex: none; }
+.frame > h2 { font: 600 13px Hanken; color: #3c4256; margin-bottom: 10px; }
+.phone { width: 360px; height: 780px; background: var(--surface); position: relative; overflow: hidden; display: flex; flex-direction: column; border-radius: 0; }
+.status { height: 24px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; font: 600 12px Hanken; color: var(--text); background: var(--card); }
+.status.dark { background: var(--ink); color: #fff; }
+.status.surface { background: var(--surface); }
+.status i { display: inline-flex; gap: 5px; font-style: normal; }
+.status i b { width: 12px; height: 9px; border-radius: 2px; background: currentColor; opacity: .85; display: inline-block; }
+.appbar { height: 56px; flex: none; display: flex; align-items: center; gap: 10px; padding: 0 16px; background: var(--card); border-bottom: 1px solid var(--line); }
+.appbar .title { font: 700 20px Bricolage; flex: 1; }
+.appbar .back { font-size: 22px; width: 24px; color: var(--text); }
+.pro { font: 800 11px Hanken; padding: 3px 8px; border-radius: 6px; background: var(--ink); color: #fff; letter-spacing: .02em; }
+.free { font: 800 11px Hanken; padding: 3px 8px; border-radius: 6px; background: var(--surface); color: var(--muted); border: 1px solid var(--line); }
+.content { flex: 1; overflow: hidden; padding: 16px; }
+.navbar { height: 64px; flex: none; display: grid; grid-template-columns: repeat(4,1fr); background: var(--card); border-top: 1px solid var(--line); }
+.navbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: 700 11px Hanken; color: var(--muted); text-decoration: none; }
+.navbar a.on { color: var(--ink); }
+.navbar a.on .ind { background: var(--ink-soft); }
+.navbar .ind { width: 56px; height: 28px; border-radius: 14px; display: grid; place-items: center; }
+.gesture { height: 16px; flex: none; background: var(--card); display: grid; place-items: center; }
+.gesture::after { content: ""; width: 108px; height: 4px; border-radius: 2px; background: #9aa0b4; }
+svg.i { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+h1 { font: 800 26px/30px Bricolage; letter-spacing: -.015em; }
+.sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.stat { padding: 12px 14px; }
+.stat small { display: block; font-size: 12px; color: var(--muted); }
+.stat strong { display: block; font: 800 22px/28px Bricolage; margin-top: 2px; letter-spacing: -.01em; }
+.stat em { font-style: normal; font-size: 11px; color: var(--muted); }
+.paid-c { color: var(--paid); } .due-c { color: var(--due); }
+.progress { height: 6px; border-radius: 3px; background: var(--card); border: 1px solid var(--line); margin-top: 10px; overflow: hidden; }
+.progress b { display: block; height: 100%; background: var(--paid); border-radius: 3px; }
+.sec-h { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.sec-h h3 { font: 700 17px Bricolage; }
+.sec-h span { font-size: 12px; color: var(--muted); }
+.row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; min-height: 64px; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 700 13px Hanken; flex: none; }
+.av.due { background: var(--due-soft); color: var(--due); } .av.paid { background: var(--paid-soft); color: var(--paid); } .av.ink { background: var(--ink-soft); color: var(--ink); }
+.row .t { flex: 1; min-width: 0; }
+.row .t b { display: block; font: 600 15px Hanken; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .t span { display: block; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .amt { font: 700 15px Bricolage; color: var(--paid); }
+.btn { white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 18px; border-radius: 12px; font: 600 15px Hanken; border: 0; }
+.btn.sm { height: 36px; padding: 0 12px; font-size: 13px; border-radius: 10px; }
+.btn.lg { height: 52px; font-size: 16px; }
+.btn.full { width: 100%; }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.tonal { background: var(--ink-soft); color: var(--ink); }
+.btn.outline { background: #fff; color: var(--text); border: 1px solid var(--line); }
+.btn.text { background: transparent; color: var(--ink); }
+.btn.wa { background: var(--wa); color: var(--on-wa); }
+.btn.danger { background: #fff; color: var(--due); border: 1px solid #f3c9b3; }
+.wa-ico { width: 18px; height: 18px; fill: currentColor; }
+.chip { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 12px; font: 700 11px Hanken; white-space: nowrap; }
+.chip.paid { background: var(--paid-soft); color: var(--paid); }
+.chip.due { background: var(--due-soft); color: var(--due); }
+.chip.up { background: #fff; color: var(--muted); border: 1px solid var(--line); }
+.fchips { display: flex; gap: 8px; margin-top: 12px; overflow: hidden; }
+.fchip { height: 32px; padding: 0 14px; border-radius: 16px; display: inline-flex; align-items: center; font: 600 13px Hanken; background: #fff; color: var(--muted); border: 1px solid var(--line); white-space: nowrap; }
+.fchip.on { background: var(--text); color: #fff; border-color: var(--text); }
+.search { height: 48px; border-radius: 24px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; gap: 10px; padding: 0 16px; color: var(--muted); font-size: 15px; }
+.field { margin-top: 14px; }
+.field label { display: block; font: 600 13px Hanken; margin-bottom: 6px; }
+.field .in { height: 52px; border-radius: 12px; border: 1px solid var(--line); background: #fff; display: flex; align-items: center; padding: 0 14px; font-size: 16px; }
+.field .in.focus { border: 2px solid var(--ink); padding: 0 13px; }
+.field .in.ph { color: #9aa0b4; }
+.field .hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.banner { border-radius: 14px; padding: 12px 14px; font-size: 13px; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+.banner.info { background: var(--ink-soft); color: var(--ink); }
+.banner.ok { background: var(--paid-soft); color: var(--paid); }
+.fab { position: absolute; right: 16px; bottom: 96px; height: 56px; padding: 0 20px; border-radius: 16px; background: var(--ink); color: #fff; display: flex; align-items: center; gap: 10px; font: 600 15px Hanken; box-shadow: 0 6px 16px rgba(36,51,166,.35); }
+.scrim { position: absolute; inset: 0; background: rgba(13,18,64,.45); }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; background: #fff; border-radius: 24px 24px 0 0; padding: 8px 20px 24px; }
+.sheet .handle { width: 32px; height: 4px; border-radius: 2px; background: #c7ccd9; margin: 4px auto 14px; }
+.sheet h3 { font: 700 20px Bricolage; margin-bottom: 4px; }
+.seg { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.seg span { height: 40px; border-radius: 10px; border: 1px solid var(--line); display: grid; place-items: center; font: 600 13px Hanken; }
+.seg span.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.toggle { display: flex; gap: 6px; flex-wrap: wrap; }
+.toggle span { height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); display: inline-flex; align-items: center; font: 600 13px Hanken; background: #fff; }
+.toggle span.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.bubble { background: var(--bubble); border-radius: 14px; padding: 12px 14px; font-size: 14px; line-height: 1.5; color: #111b21; white-space: pre-line; margin-top: 14px; }
+.months { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
+.mo { border-radius: 12px; padding: 8px 4px; text-align: center; border: 1px solid; }
+.mo b { display: block; font: 700 13px Hanken; } .mo span { font: 600 11px Hanken; }
+.mo.paid { background: var(--paid-soft); color: var(--paid); border-color: #b9dfcb; }
+.mo.due { background: var(--due-soft); color: var(--due); border-color: #f3c9b3; }
+.mo.up { background: var(--surface); color: var(--muted); border-color: var(--line); }
+.register { background-color: #fff; background-image:
+  linear-gradient(to right, transparent 38px, var(--margin) 38px, var(--margin) 39.5px, transparent 39.5px),
+  repeating-linear-gradient(to bottom, transparent 0, transparent 39px, var(--rule) 39px, var(--rule) 40px); }
+.hand { font-family: Kalam, cursive; }
+.stamp { display: inline-block; border: 2px solid var(--paid); color: var(--paid); border-radius: 5px; padding: 0 5px; font: 800 10px Bricolage; letter-spacing: .04em; transform: rotate(-8deg); }
+.dots { display: flex; gap: 6px; justify-content: center; }
+.dots i { width: 8px; height: 8px; border-radius: 4px; background: var(--line); }
+.dots i.on { width: 22px; background: var(--ink); }
+.list-set .li { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.list-set .li:last-child { border: 0; }
+.list-set .li span { color: var(--muted); font-size: 13px; }
+.k { font: 700 12px Hanken; color: var(--muted); margin: 18px 0 8px; }
+.qr { width: 150px; height: 150px; margin: 10px auto 0; background:
+  conic-gradient(from 90deg at 2px 2px, transparent 90deg, #161a2c 0) 0 0/10px 10px; border: 10px solid #fff; outline: 1px solid var(--line); border-radius: 8px; }
+</style>
+</head>
+<body>
+
+<!-- SVG sprite -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="logo" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#2433A6"/><rect x="17" y="5" width="6" height="11" rx="3" fill="#C9D3FF"/><rect x="41" y="5" width="6" height="11" rx="3" fill="#C9D3FF"/><path d="M16 47V24l15 17L49 19" fill="none" stroke="#fff" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-members" viewBox="0 0 24 24"><path d="M16 19v-1a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v1M9 10a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM22 19v-1a4 4 0 0 0-3-3.8M16 3.2a3.5 3.5 0 0 1 0 6.6"/></symbol>
+    <symbol id="i-plan" viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 11h18M7 15h3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="wa" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1.1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.6-.1 1.2Z"/></symbol>
+  </defs>
+</svg>
+
+<!-- 01 SPLASH -->
+<div class="frame"><h2>01 Splash</h2>
+<section class="phone" id="s01-splash" style="background:var(--ink)">
+  <div class="status dark"><span>9:41</span><i><b></b><b></b></i></div>
+  <div style="flex:1;display:grid;place-items:center;text-align:center;color:#fff">
+    <div>
+      <svg width="88" height="88" style="border-radius:22px;box-shadow:0 0 0 2px rgba(255,255,255,.25)"><use href="#logo"/></svg>
+      <p style="font:800 34px Bricolage;margin-top:18px;letter-spacing:-.02em">Mahina</p>
+      <p style="font-size:13px;opacity:.7;margin-top:2px">by SlotRecover</p>
+    </div>
+  </div>
+  <p style="text-align:center;color:rgba(255,255,255,.65);font-size:12px;padding-bottom:28px">Made in India · Fees on time, every month</p>
+</section></div>
+
+<!-- 02 ONBOARDING -->
+<div class="frame"><h2>02 Onboarding (1 of 3)</h2>
+<section class="phone" id="s02-onboarding" style="background:#fff">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div style="display:flex;justify-content:flex-end;padding:8px 16px"><span class="btn text sm">Skip</span></div>
+  <div style="padding:8px 20px">
+    <div class="register card" style="padding:14px 14px 10px 50px;border-color:var(--rule)">
+      <p class="hand" style="font-size:20px;color:var(--ink);height:40px;line-height:40px">Oct fees</p>
+      <div class="hand" style="font-size:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;height:40px">Aarav <span class="stamp">PAID</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;height:40px">Diya <span style="color:var(--due)">due</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;height:40px">Kabir <span class="stamp">PAID</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;height:40px">Meera <span class="stamp">PAID</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:28px 24px 0">
+    <h1 style="font-size:30px;line-height:34px">Get every month's fees on time</h1>
+    <p style="color:var(--muted);font-size:16px;line-height:24px;margin-top:10px">See who has paid and who hasn't, for every month, in one register.</p>
+  </div>
+  <div style="margin-top:auto;padding:0 20px 20px">
+    <div class="dots" style="margin-bottom:20px"><i class="on"></i><i></i><i></i></div>
+    <span class="btn primary lg full">Next</span>
+  </div>
+  <div class="gesture" style="background:#fff"></div>
+</section></div>
+
+<!-- 03 LOGIN -->
+<div class="frame"><h2>03 Log in</h2>
+<section class="phone" id="s03-login" style="background:#fff">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div style="padding:24px 20px 0">
+    <svg width="44" height="44"><use href="#logo"/></svg>
+    <h1 style="margin-top:22px">Welcome back</h1>
+    <p class="sub">Log in to your fee register.</p>
+    <div class="field" style="margin-top:24px"><label>Email</label><div class="in focus">ramesh.sharma@gmail.com</div></div>
+    <div class="field"><label>Password</label><div class="in">••••••••••</div></div>
+    <p style="margin-top:10px"><span class="btn text sm" style="padding:0">Forgot password?</span></p>
+    <span class="btn primary lg full" style="margin-top:18px">Log in</span>
+    <span class="btn text full" style="margin-top:6px">Email me a sign-in link instead</span>
+  </div>
+  <p style="margin-top:auto;text-align:center;font-size:14px;color:var(--muted);padding-bottom:24px">New to Mahina? <b style="color:var(--ink)">Create a free account</b></p>
+  <div class="gesture" style="background:#fff"></div>
+</section></div>
+
+<!-- 04 SIGNUP -->
+<div class="frame"><h2>04 Sign up</h2>
+<section class="phone" id="s04-signup" style="background:#fff">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar" style="border:0"><span class="back">←</span></div>
+  <div style="padding:0 20px">
+    <h1>Start your free register</h1>
+    <p class="sub">Free for up to 15 members. No card needed.</p>
+    <div class="field" style="margin-top:20px"><label>Your name</label><div class="in">Ramesh Sharma</div></div>
+    <div class="field"><label>Email</label><div class="in">ramesh.sharma@gmail.com</div></div>
+    <div class="field"><label>Password</label><div class="in focus">••••••••</div><p class="hint">At least 8 characters</p></div>
+    <span class="btn primary lg full" style="margin-top:22px">Create free account</span>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5">By creating an account you agree to the terms and privacy policy.</p>
+  </div>
+  <p style="margin-top:auto;text-align:center;font-size:14px;color:var(--muted);padding-bottom:24px">Already have an account? <b style="color:var(--ink)">Log in</b></p>
+  <div class="gesture" style="background:#fff"></div>
+</section></div>
+
+<!-- 05 SETUP -->
+<div class="frame"><h2>05 First-run setup</h2>
+<section class="phone" id="s05-setup">
+  <div class="status surface"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="content" style="padding-top:20px">
+    <p style="font:700 12px Hanken;color:var(--ink)">Step 1 of 2</p>
+    <h1 style="margin-top:6px">Welcome to Mahina</h1>
+    <p class="sub">Two details and you're ready to send your first reminder.</p>
+    <div class="field" style="margin-top:18px"><label>Business name</label><div class="in">Sharma Tuition Classes</div><p class="hint">Shown on reminders and receipts.</p></div>
+    <div class="field"><label>What kind of business?</label><div class="in" style="justify-content:space-between">Home tuition <span style="color:var(--muted)">▾</span></div></div>
+    <div class="card" style="padding:14px;margin-top:16px;background:#fff">
+      <p style="font:600 15px Hanken">Where members pay you</p>
+      <div class="field" style="margin-top:10px"><label>UPI ID</label><div class="in focus">sharma.tuitions@okaxis</div><p class="hint">Find it in GPay, PhonePe or Paytm under your profile.</p></div>
+    </div>
+  </div>
+  <div style="padding:12px 16px 20px;background:var(--surface)"><span class="btn primary lg full">Save and add members</span></div>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 06 DASHBOARD -->
+<div class="frame"><h2>06 Home (dashboard)</h2>
+<section class="phone" id="s06-home">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><svg width="28" height="28"><use href="#logo"/></svg><span class="title">Mahina</span><span class="pro">PRO</span></div>
+  <div class="content">
+    <h1 style="font-size:24px">Good morning, Ramesh</h1>
+    <p class="sub">October 2026 at Sharma Tuition Classes</p>
+    <div class="stats">
+      <div class="card stat"><small>Collected this month</small><strong class="paid-c">₹14,800</strong><em>64% of ₹23,000</em></div>
+      <div class="card stat"><small>Pending</small><strong class="due-c">₹10,200</strong><em>5 people owe</em></div>
+    </div>
+    <div class="progress"><b style="width:64%"></b></div>
+    <div class="card" style="margin-top:14px;overflow:hidden">
+      <div class="sec-h"><h3>To remind</h3><span>5 pending</span></div>
+      <div class="row"><span class="av due">MJ</span><span class="t"><b>Meera Joshi</b><span><b style="display:inline;color:var(--due);font:600 13px Hanken">₹4,000</b> · 2 months</span></span><span class="btn wa sm"><svg class="wa-ico"><use href="#wa"/></svg>Remind</span></div>
+      <div class="row"><span class="av due">IR</span><span class="t"><b>Ishaan Rao</b><span><b style="display:inline;color:var(--due);font:600 13px Hanken">₹2,000</b> · 1 month</span></span><span class="btn wa sm"><svg class="wa-ico"><use href="#wa"/></svg>Remind</span></div>
+      <div class="row"><span class="av due">DV</span><span class="t"><b>Diya Verma</b><span><b style="display:inline;color:var(--due);font:600 13px Hanken">₹1,500</b> · 1 month</span></span><span class="btn wa sm"><svg class="wa-ico"><use href="#wa"/></svg>Remind</span></div>
+      <div class="row"><span class="av due">AG</span><span class="t"><b>Ananya Gupta</b><span><b style="display:inline;color:var(--due);font:600 13px Hanken">₹1,500</b> · 1 month</span></span><span class="btn wa sm"><svg class="wa-ico"><use href="#wa"/></svg>Remind</span></div>
+    </div>
+  </div>
+  <nav class="navbar">
+    <a class="on"><span class="ind"><svg class="i"><use href="#i-home"/></svg></span>Home</a>
+    <a><span class="ind"><svg class="i"><use href="#i-members"/></svg></span>Members</a>
+    <a><span class="ind"><svg class="i"><use href="#i-plan"/></svg></span>Plan</a>
+    <a><span class="ind"><svg class="i"><use href="#i-settings"/></svg></span>Settings</a>
+  </nav>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 07 MEMBERS -->
+<div class="frame"><h2>07 Members</h2>
+<section class="phone" id="s07-members">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="title">Members</span><svg class="i" style="color:var(--muted)"><use href="#i-more"/></svg></div>
+  <div class="content" style="padding-bottom:0">
+    <div class="search"><svg class="i"><use href="#i-search"/></svg>Search name, phone or batch</div>
+    <div class="fchips"><span class="fchip on">All</span><span class="fchip">Owes money</span><span class="fchip">Paid this month</span><span class="fchip">Inactive</span></div>
+    <p style="font-size:12px;color:var(--muted);margin:12px 2px 8px">15 active · Class 10 Maths, Class 8 Science, Class 12 Physics</p>
+    <div class="card" style="overflow:hidden">
+      <div class="row"><span class="av paid">AS</span><span class="t"><b>Aarav Sharma</b><span>₹1,500/mo · due 5th · Class 10 Maths</span></span><span class="chip paid">Paid</span></div>
+      <div class="row"><span class="av paid">AN</span><span class="t"><b>Arjun Nair</b><span>₹1,500/mo · due 5th · Class 10 Maths</span></span><span class="chip paid">Paid</span></div>
+      <div class="row"><span class="av due">DV</span><span class="t"><b>Diya Verma</b><span>₹1,500/mo · due 5th · Class 10 Maths</span></span><span class="chip due">Due · ₹1,500</span></div>
+      <div class="row"><span class="av paid">KS</span><span class="t"><b>Kabir Singh</b><span>₹1,200/mo · due 5th · Class 8 Science</span></span><span class="chip paid">Paid</span></div>
+      <div class="row"><span class="av due">MJ</span><span class="t"><b>Meera Joshi</b><span>₹2,000/mo · due 5th · Class 12 Physics</span></span><span class="chip due">Due · ₹4,000</span></div>
+      <div class="row"><span class="av paid">MB</span><span class="t"><b>Myra Bose</b><span>₹1,200/mo · due 5th · Class 8 Science</span></span><span class="chip paid">Paid</span></div>
+    </div>
+  </div>
+  <span class="fab"><svg class="i"><use href="#i-plus"/></svg>Add member</span>
+  <nav class="navbar">
+    <a><span class="ind"><svg class="i"><use href="#i-home"/></svg></span>Home</a>
+    <a class="on"><span class="ind"><svg class="i"><use href="#i-members"/></svg></span>Members</a>
+    <a><span class="ind"><svg class="i"><use href="#i-plan"/></svg></span>Plan</a>
+    <a><span class="ind"><svg class="i"><use href="#i-settings"/></svg></span>Settings</a>
+  </nav>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 08 MEMBERS EMPTY -->
+<div class="frame"><h2>08 Members — empty state</h2>
+<section class="phone" id="s08-members-empty">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="title">Members</span></div>
+  <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+    <div class="register card" style="width:220px;height:160px;padding:14px 14px 0 50px;text-align:left;border-color:var(--rule)">
+      <p class="hand" style="font-size:18px;color:var(--ink);line-height:40px">Nov fees</p>
+      <p class="hand" style="font-size:16px;color:#b6bccb;line-height:40px">…</p>
+    </div>
+    <h1 style="font-size:22px;margin-top:24px">Your register is empty</h1>
+    <p class="sub" style="max-width:270px;line-height:1.5">Add the people who pay you every month. You can paste a whole batch at once.</p>
+    <span class="btn primary" style="margin-top:20px;width:220px">Add member</span>
+    <span class="btn outline" style="margin-top:10px;width:220px">Add several</span>
+    <span class="btn text" style="margin-top:4px;width:220px">Pick from contacts</span>
+  </div>
+  <nav class="navbar">
+    <a><span class="ind"><svg class="i"><use href="#i-home"/></svg></span>Home</a>
+    <a class="on"><span class="ind"><svg class="i"><use href="#i-members"/></svg></span>Members</a>
+    <a><span class="ind"><svg class="i"><use href="#i-plan"/></svg></span>Plan</a>
+    <a><span class="ind"><svg class="i"><use href="#i-settings"/></svg></span>Settings</a>
+  </nav>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 09 ADD MEMBER SHEET -->
+<div class="frame"><h2>09 Add member (bottom sheet)</h2>
+<section class="phone" id="s09-add-member">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="title">Members</span></div>
+  <div class="scrim"></div>
+  <div class="sheet" style="padding-bottom:20px">
+    <div class="handle"></div>
+    <h3>Add member</h3>
+    <div class="field"><label>Name</label><div class="in focus">Sana Qureshi</div></div>
+    <div class="field"><label>WhatsApp number of whoever pays</label><div class="in">98222 33344</div><p class="hint">For students, use a parent's number.</p></div>
+    <div class="grid2"><div class="field"><label>Monthly fee (₹)</label><div class="in">1,200</div></div><div class="field"><label>Due on day</label><div class="in">5</div></div></div>
+    <div class="grid2"><div class="field"><label>Batch or group</label><div class="in">Class 8 Science</div></div><div class="field"><label>Start month</label><div class="in">Oct 2026</div></div></div>
+    <span class="btn primary lg full" style="margin-top:18px">Add member</span>
+  </div>
+</section></div>
+
+<!-- 10 BULK ADD -->
+<div class="frame"><h2>10 Add several (bottom sheet)</h2>
+<section class="phone" id="s10-bulk-add">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="title">Members</span></div>
+  <div class="scrim"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Add several members</h3>
+    <div class="field"><label>One member per line: name, phone, monthly fee</label>
+      <div class="in focus" style="height:168px;align-items:flex-start;padding:12px 13px;font:14px/24px ui-monospace,monospace;white-space:pre">Aarav Sharma, 9876543210, 1500
+Diya Verma, 9812345678, 1500
+Kabir Singh, , 1200
+Meera Joshi, 9765432109, 2000
+Rohit Kumar, 9811122233, 1500|</div></div>
+    <div class="grid2"><div class="field"><label>Batch (optional)</label><div class="in">Class 10 Maths</div></div><div class="field"><label>Due on day</label><div class="in">5</div></div></div>
+    <span class="btn primary lg full" style="margin-top:18px">Add all 5</span>
+  </div>
+</section></div>
+
+<!-- 11 MEMBER DETAIL -->
+<div class="frame"><h2>11 Member detail</h2>
+<section class="phone" id="s11-member">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="back">←</span><span class="title" style="font-size:18px">Meera Joshi</span><svg class="i" style="color:var(--muted)"><use href="#i-more"/></svg></div>
+  <div class="content">
+    <div style="display:flex;gap:12px;align-items:center"><span class="av due">MJ</span><div><p style="font:600 15px Hanken">₹2,000 a month · due on the 5th</p><p style="font-size:13px;color:var(--muted)">Class 12 Physics · 97654 32109</p></div></div>
+    <div class="grid2" style="margin-top:14px;gap:8px"><span class="btn wa"><svg class="wa-ico"><use href="#wa"/></svg>Remind</span><span class="btn primary">Record payment</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px">
+      <div class="card stat" style="padding:10px"><small>Outstanding</small><strong class="due-c" style="font-size:19px">₹4,000</strong><em>2 months</em></div>
+      <div class="card stat" style="padding:10px"><small>Paid so far</small><strong style="font-size:19px">₹10,000</strong><em>5 payments</em></div>
+      <div class="card stat" style="padding:10px"><small>Since</small><strong style="font-size:19px">Apr 26</strong><em>7 months</em></div>
+    </div>
+    <div class="card" style="padding:14px;margin-top:12px">
+      <h3 style="font:700 17px Bricolage">Month by month</h3>
+      <p style="font-size:12px;color:var(--muted);margin-top:2px">Tap a month that isn't paid to record a payment for it.</p>
+      <div class="months">
+        <div class="mo due"><b>Oct 26</b><span>Due</span></div><div class="mo due"><b>Sep 26</b><span>Due</span></div><div class="mo paid"><b>Aug 26</b><span>Paid</span></div>
+        <div class="mo paid"><b>Jul 26</b><span>Paid</span></div><div class="mo paid"><b>Jun 26</b><span>Paid</span></div><div class="mo paid"><b>May 26</b><span>Paid</span></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;overflow:hidden">
+      <div class="sec-h"><h3>Payments</h3></div>
+      <div class="row" style="min-height:56px"><span class="t"><b>₹2,000 <span style="display:inline;font-weight:400;color:var(--muted)">for August 2026</span></b><span>#1042 · UPI · 4 Aug 2026</span></span><span class="btn text sm">Receipt</span></div>
+    </div>
+  </div>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 12 RECORD PAYMENT -->
+<div class="frame"><h2>12 Record payment (bottom sheet)</h2>
+<section class="phone" id="s12-record-payment">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="back">←</span><span class="title" style="font-size:18px">Meera Joshi</span></div>
+  <div class="scrim"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Record payment from Meera</h3>
+    <div class="field"><label>For month</label><div class="in" style="justify-content:space-between">September 2026 (due) <span style="color:var(--muted)">▾</span></div></div>
+    <div class="grid2"><div class="field"><label>Amount (₹)</label><div class="in focus">2,000</div></div><div class="field"><label>Paid on</label><div class="in">9 Oct 2026</div></div></div>
+    <div class="field"><label>Paid by</label><div class="seg"><span class="on">UPI</span><span>Cash</span><span>Bank</span><span>Other</span></div></div>
+    <div class="field"><label>Note (optional)</label><div class="in ph">e.g. UPI ref 4512…</div></div>
+    <span class="btn primary lg full" style="margin-top:18px">Record payment</span>
+  </div>
+</section></div>
+
+<!-- 13 PAYMENT RECORDED -->
+<div class="frame"><h2>13 Payment recorded → send receipt</h2>
+<section class="phone" id="s13-recorded">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="back">←</span><span class="title" style="font-size:18px">Meera Joshi</span></div>
+  <div class="content">
+    <div class="card" style="padding:14px">
+      <h3 style="font:700 17px Bricolage">Month by month</h3>
+      <div class="months">
+        <div class="mo due"><b>Oct 26</b><span>Due</span></div><div class="mo paid" style="position:relative"><b>Sep 26</b><span>Paid</span><span class="stamp" style="position:absolute;right:-6px;top:-8px;background:#fff">PAID</span></div><div class="mo paid"><b>Aug 26</b><span>Paid</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="scrim"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <div style="width:56px;height:56px;border-radius:28px;background:var(--paid-soft);color:var(--paid);display:grid;place-items:center;margin:4px auto 12px"><svg class="i" style="width:30px;height:30px;stroke-width:2.4"><use href="#i-check"/></svg></div>
+    <h3 style="text-align:center">₹2,000 recorded</h3>
+    <p style="text-align:center;color:var(--muted);font-size:14px">For September 2026 · Receipt #1047</p>
+    <span class="btn wa lg full" style="margin-top:20px"><svg class="wa-ico"><use href="#wa"/></svg>Send receipt on WhatsApp</span>
+    <span class="btn outline full" style="margin-top:10px">Done</span>
+  </div>
+</section></div>
+
+<!-- 14 REMINDER COMPOSER -->
+<div class="frame"><h2>14 Reminder composer (bottom sheet)</h2>
+<section class="phone" id="s14-reminder">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="back">←</span><span class="title" style="font-size:18px">Meera Joshi</span></div>
+  <div class="scrim"></div>
+  <div class="sheet">
+    <div class="handle"></div>
+    <h3>Remind Meera</h3>
+    <p class="k" style="margin:12px 0 6px">Language</p><div class="toggle"><span class="on">Hinglish</span><span>हिंदी</span><span>English</span></div><p class="k" style="margin:12px 0 6px">Tone</p><div class="toggle"><span>Gentle</span><span class="on">Firm</span></div>
+    <div class="bubble">Namaste 🙏
+Sharma Tuition Classes: Meera ki Sept, Oct ki fees ₹4,000 abhi tak pending hai. Kripya aaj payment kar dijiye.
+UPI se pay karein: mahina-murex.vercel.app/p/7f3c9a12…
+Dhanyavaad</div>
+    <div class="grid2" style="margin-top:16px;gap:8px"><span class="btn wa" style="padding:0 10px"><svg class="wa-ico"><use href="#wa"/></svg>Open WhatsApp</span><span class="btn outline" style="padding:0 10px">Copy message</span></div>
+  </div>
+</section></div>
+
+<!-- 15 PLAN -->
+<div class="frame"><h2>15 Plan</h2>
+<section class="phone" id="s15-plan">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="title">Your plan</span><span class="free">FREE</span></div>
+  <div class="content">
+    <div class="card" style="padding:14px">
+      <p style="font:600 14px Hanken">Free plan</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:2px">13 of 15 members used</p>
+      <div class="progress" style="margin-top:10px;height:8px"><b style="width:87%;background:var(--ink)"></b></div>
+    </div>
+    <div style="background:var(--ink);color:#fff;border-radius:16px;padding:16px;margin-top:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start"><p style="opacity:.8;font-size:14px">Pro yearly</p><span class="chip" style="background:var(--ink-light);color:var(--ink)">Best value</span></div>
+      <p style="font:800 32px Bricolage;margin-top:2px">₹1,490</p>
+      <p style="font-size:13px;opacity:.8">₹124 a month, two months free</p>
+      <span class="btn full" style="background:#fff;color:var(--ink);margin-top:14px">Upgrade</span>
+    </div>
+    <div class="card" style="padding:16px;margin-top:12px">
+      <p style="color:var(--muted);font-size:14px">Pro monthly</p>
+      <p style="font:800 32px Bricolage;margin-top:2px">₹149</p>
+      <p style="font-size:13px;color:var(--muted)">for 1 month</p>
+      <span class="btn primary full" style="margin-top:14px">Upgrade</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5">Unlimited members · Priority support · No auto-renewal. Pay with UPI, card or net banking through Razorpay.</p>
+  </div>
+  <nav class="navbar">
+    <a><span class="ind"><svg class="i"><use href="#i-home"/></svg></span>Home</a>
+    <a><span class="ind"><svg class="i"><use href="#i-members"/></svg></span>Members</a>
+    <a class="on"><span class="ind"><svg class="i"><use href="#i-plan"/></svg></span>Plan</a>
+    <a><span class="ind"><svg class="i"><use href="#i-settings"/></svg></span>Settings</a>
+  </nav>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 16 SETTINGS -->
+<div class="frame"><h2>16 Settings</h2>
+<section class="phone" id="s16-settings">
+  <div class="status"><span>9:41</span><i><b></b><b></b></i></div>
+  <div class="appbar"><span class="title">Settings</span></div>
+  <div class="content">
+    <div class="card" style="display:flex;gap:12px;align-items:center;padding:14px"><span class="av ink">ST</span><div><p style="font:600 15px Hanken">Sharma Tuition Classes</p><p style="font-size:13px;color:var(--muted)">ramesh.sharma@gmail.com</p></div></div>
+    <p class="k">Business</p>
+    <div class="card list-set">
+      <div class="li">Business name<span>Sharma Tuition Classes</span></div>
+      <div class="li">Business type<span>Home tuition</span></div>
+      <div class="li">Your phone<span>98100 12345</span></div>
+    </div>
+    <p class="k">Where members pay you</p>
+    <div class="card list-set">
+      <div class="li">UPI ID<span>sharma.tuitions@okaxis</span></div>
+      <div class="li">Name on UPI<span>Ramesh Sharma</span></div>
+    </div>
+    <p class="k">Reminders</p>
+    <div class="card list-set">
+      <div class="li">Default language<span>Hinglish</span></div>
+      <div class="li">App language<span>English</span></div>
+    </div>
+    <p class="k">Account</p>
+    <div class="card list-set">
+      <div class="li">Help and support<span>›</span></div>
+      <div class="li" style="color:var(--due)">Sign out<span></span></div>
+    </div>
+  </div>
+  <nav class="navbar">
+    <a><span class="ind"><svg class="i"><use href="#i-home"/></svg></span>Home</a>
+    <a><span class="ind"><svg class="i"><use href="#i-members"/></svg></span>Members</a>
+    <a><span class="ind"><svg class="i"><use href="#i-plan"/></svg></span>Plan</a>
+    <a class="on"><span class="ind"><svg class="i"><use href="#i-settings"/></svg></span>Settings</a>
+  </nav>
+  <div class="gesture"></div>
+</section></div>
+
+<!-- 17 COMPONENTS -->
+<div class="frame" style="width:760px"><h2>17 Components</h2>
+<section class="phone" id="s17-components" style="width:760px;height:780px;background:#fff;padding:24px;display:block">
+  <p class="k" style="margin-top:0">Buttons (48dp, radius 12)</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <span class="btn primary">Primary</span><span class="btn tonal">Tonal</span><span class="btn outline">Outline</span><span class="btn text">Text</span>
+    <span class="btn wa"><svg class="wa-ico"><use href="#wa"/></svg>WhatsApp</span><span class="btn danger">Destructive</span><span class="btn primary" style="opacity:.5">Disabled</span>
+  </div>
+  <p class="k">Status chips</p>
+  <div style="display:flex;gap:8px"><span class="chip paid">Paid</span><span class="chip due">Due · ₹1,500</span><span class="chip due">₹500 left</span><span class="chip up">Upcoming</span><span class="pro">PRO</span><span class="free">FREE</span></div>
+  <p class="k">Filter chips</p>
+  <div style="display:flex;gap:8px"><span class="fchip on">All</span><span class="fchip">Owes money</span><span class="fchip">Paid this month</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <div>
+      <p class="k">Text field (52dp): rest, focused, hint</p>
+      <div class="field" style="margin-top:0"><label>Monthly fee (₹)</label><div class="in">1,500</div></div>
+      <div class="field"><label>UPI ID</label><div class="in focus">sharma.tuitions@okaxis</div><p class="hint">Payments go straight to this account.</p></div>
+      <div class="field"><label>Phone</label><div class="in" style="border-color:var(--due)">98765</div><p class="hint" style="color:var(--due)">Enter a valid phone number (10 digits).</p></div>
+    </div>
+    <div>
+      <p class="k">Stat cards</p>
+      <div class="stats" style="margin-top:0"><div class="card stat"><small>Collected</small><strong class="paid-c">₹14,800</strong><em>64% of ₹23,000</em></div><div class="card stat"><small>Pending</small><strong class="due-c">₹10,200</strong><em>5 people owe</em></div></div>
+      <p class="k">List row (min 64dp)</p>
+      <div class="card"><div class="row"><span class="av due">MJ</span><span class="t"><b>Meera Joshi</b><span>₹2,000/mo · due 5th</span></span><span class="chip due">Due · ₹4,000</span></div></div>
+      <p class="k">Month chips · PAID stamp</p>
+      <div style="display:flex;gap:8px;align-items:center"><div class="mo paid" style="width:80px"><b>Aug 26</b><span>Paid</span></div><div class="mo due" style="width:80px"><b>Sep 26</b><span>Due</span></div><div class="mo up" style="width:80px"><b>Oct 26</b><span>Upcoming</span></div><span class="stamp" style="font-size:14px;padding:1px 8px">PAID</span></div>
+    </div>
+  </div>
+  <p class="k">Banners</p>
+  <div style="display:flex;gap:10px"><div class="banner info" style="flex:1"><span><b>Add your UPI ID</b> so reminders include a payment link.</span><span class="btn primary sm">Add</span></div><div class="banner ok" style="flex:1">Payment of ₹2,000 recorded for September.</div></div>
+  <p class="k">Colour</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px">
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--ink)"></div>ink #2433A6</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--ink-soft);border:1px solid var(--line)"></div>inkSoft</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--paid)"></div>paid #0E7A4E</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--paid-soft)"></div>paidSoft</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--due)"></div>due #C2410C</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--due-soft)"></div>dueSoft</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--text)"></div>text</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--muted)"></div>muted</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--surface);border:1px solid var(--line)"></div>surface</div>
+    <div><div style="width:64px;height:40px;border-radius:8px;background:var(--wa)"></div>whatsapp</div>
+  </div>
+</section></div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "$description": "Mahina design tokens. Source of truth for the Android app. Values match the web app (app/globals.css).",
+  "color": {
+    "ink":        { "value": "#2433A6", "use": "Primary brand, primary buttons, active nav, links" },
+    "inkDark":    { "value": "#1A2580", "use": "Pressed state of primary" },
+    "inkSoft":    { "value": "#EEF1FF", "use": "Selected nav background, info banners, tonal buttons" },
+    "inkLight":   { "value": "#C9D3FF", "use": "Logo binder rings, primary on dark surfaces" },
+    "paid":       { "value": "#0E7A4E", "use": "Paid amounts, PAID stamp, success" },
+    "paidSoft":   { "value": "#E4F4EC", "use": "Paid chips, success banners" },
+    "due":        { "value": "#C2410C", "use": "Outstanding amounts, Due chips, errors" },
+    "dueSoft":    { "value": "#FDEEE4", "use": "Due chips, error banners, due avatars" },
+    "margin":     { "value": "#E3474F", "use": "Register red margin line (decorative only)" },
+    "rule":       { "value": "#D9E3F2", "use": "Register ruled lines (decorative only)" },
+    "text":       { "value": "#161A2C", "use": "Primary text" },
+    "muted":      { "value": "#5B6178", "use": "Secondary text, captions" },
+    "surface":    { "value": "#F5F7FB", "use": "Screen background behind cards" },
+    "card":       { "value": "#FFFFFF", "use": "Cards, sheets, top app bar, bottom nav" },
+    "line":       { "value": "#E3E7F0", "use": "Card outlines, dividers" },
+    "whatsapp":   { "value": "#25D366", "use": "WhatsApp action buttons only" },
+    "onWhatsapp": { "value": "#0B3D20", "use": "Text and icon on WhatsApp buttons" },
+    "chatBubble": { "value": "#D9FDD3", "use": "Reminder message preview background" },
+    "scrim":      { "value": "#0D1240", "alpha": 0.45, "use": "Bottom sheet scrim" }
+  },
+  "font": {
+    "display": { "family": "Bricolage Grotesque", "file": "assets/fonts/bricolage_grotesque_variable.ttf", "use": "Screen titles, big numbers, stamps" },
+    "body":    { "family": "Hanken Grotesk",      "file": "assets/fonts/hanken_grotesk_variable.ttf",      "use": "All other UI text" },
+    "hand":    { "family": "Kalam",               "files": ["assets/fonts/kalam_regular_latin.ttf", "assets/fonts/kalam_regular_devanagari.ttf"], "use": "Decorative register text on splash/onboarding only" },
+    "devanagariFallback": "System Noto Sans Devanagari (Hanken has no Devanagari glyphs; Android falls back automatically)"
+  },
+  "type": {
+    "displayLarge":  { "font": "display", "sizeSp": 34, "lineHeightSp": 38, "weight": 800, "letterSpacingEm": -0.02, "use": "Big money figures on pay screen" },
+    "headlineMedium":{ "font": "display", "sizeSp": 26, "lineHeightSp": 30, "weight": 800, "letterSpacingEm": -0.015, "use": "Screen title" },
+    "titleLarge":    { "font": "display", "sizeSp": 20, "lineHeightSp": 26, "weight": 700, "use": "Sheet title, card title" },
+    "statValue":     { "font": "display", "sizeSp": 24, "lineHeightSp": 28, "weight": 800, "use": "Stat card value" },
+    "titleMedium":   { "font": "body",    "sizeSp": 16, "lineHeightSp": 22, "weight": 600, "use": "List row primary text" },
+    "bodyLarge":     { "font": "body",    "sizeSp": 16, "lineHeightSp": 24, "weight": 400 },
+    "bodyMedium":    { "font": "body",    "sizeSp": 14, "lineHeightSp": 20, "weight": 400, "use": "List row secondary text" },
+    "labelLarge":    { "font": "body",    "sizeSp": 15, "lineHeightSp": 20, "weight": 600, "use": "Buttons" },
+    "labelMedium":   { "font": "body",    "sizeSp": 13, "lineHeightSp": 16, "weight": 600, "use": "Field labels" },
+    "labelSmall":    { "font": "body",    "sizeSp": 11, "lineHeightSp": 14, "weight": 700, "use": "Chips, bottom nav labels" }
+  },
+  "spacing": { "xxs": 4, "xs": 8, "sm": 12, "md": 16, "lg": 20, "xl": 24, "xxl": 32, "screenGutter": 16 },
+  "radius": { "chip": 999, "button": 12, "field": 12, "card": 16, "sheetTop": 24, "avatar": 999, "stamp": 5 },
+  "elevation": { "card": 0, "cardOutline": "1dp @line", "sheet": 8, "fab": 6 },
+  "size": {
+    "minTouchTarget": 48,
+    "buttonHeight": 48,
+    "buttonHeightLarge": 52,
+    "fieldHeight": 52,
+    "avatar": 40,
+    "listRowMinHeight": 64,
+    "topAppBar": 56,
+    "bottomNav": 64,
+    "icon": 22
+  },
+  "motion": {
+    "stampIn": { "durationMs": 420, "easing": "cubic-bezier(0.2, 0.8, 0.3, 1.2)", "from": { "scale": 1.9, "rotationDeg": -14, "alpha": 0 }, "to": { "scale": 1.0, "rotationDeg": -8, "alpha": 1 }, "use": "When a payment is recorded the month chip gets a PAID stamp. Respect 'Remove animations'." },
+    "sheet": { "durationMs": 250, "use": "Material default bottom sheet" }
+  }
+}

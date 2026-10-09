@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ink">#2433A6</color>
+    <color name="ink_dark">#1A2580</color>
+    <color name="ink_soft">#EEF1FF</color>
+    <color name="ink_light">#C9D3FF</color>
+    <color name="paid">#0E7A4E</color>
+    <color name="paid_soft">#E4F4EC</color>
+    <color name="due">#C2410C</color>
+    <color name="due_soft">#FDEEE4</color>
+    <color name="margin_red">#E3474F</color>
+    <color name="rule">#D9E3F2</color>
+    <color name="text">#161A2C</color>
+    <color name="muted">#5B6178</color>
+    <color name="surface">#F5F7FB</color>
+    <color name="card">#FFFFFF</color>
+    <color name="line">#E3E7F0</color>
+    <color name="whatsapp">#25D366</color>
+    <color name="on_whatsapp">#0B3D20</color>
+    <color name="chat_bubble">#D9FDD3</color>
+    <!-- Adaptive launcher icon background -->
+    <color name="ic_launcher_background">#2433A6</color>
+</resources>

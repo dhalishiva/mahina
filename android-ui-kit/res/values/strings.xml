@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mahina UI strings (English). Hindi in values-hi/strings.xml. Sentence case everywhere. -->
+<resources>
+    <string name="app_name">Mahina</string>
+    <string name="app_byline">by SlotRecover</string>
+
+    <!-- Onboarding -->
+    <string name="onb1_title">Get every month\'s fees on time</string>
+    <string name="onb1_body">See who has paid and who hasn\'t, for every month, in one register.</string>
+    <string name="onb2_title">Remind without the awkward ask</string>
+    <string name="onb2_body">One tap opens WhatsApp with a polite reminder in Hindi or English and your UPI payment link.</string>
+    <string name="onb3_title">Money goes straight to you</string>
+    <string name="onb3_body">Members pay into your own UPI ID. No commission, ever.</string>
+    <string name="onb_next">Next</string>
+    <string name="onb_start">Start free</string>
+    <string name="onb_have_account">I already have an account</string>
+
+    <!-- Auth -->
+    <string name="login_title">Welcome back</string>
+    <string name="login_sub">Log in to your fee register.</string>
+    <string name="signup_title">Start your free register</string>
+    <string name="signup_sub">Free for up to 15 members. No card needed.</string>
+    <string name="field_name">Your name</string>
+    <string name="field_email">Email</string>
+    <string name="field_password">Password</string>
+    <string name="field_password_hint">At least 8 characters</string>
+    <string name="action_login">Log in</string>
+    <string name="action_create_account">Create free account</string>
+    <string name="action_email_link">Email me a sign-in link</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="check_email_title">Check your email</string>
+    <string name="check_email_body">We sent a link to %1$s. Open it on this phone to continue.</string>
+    <string name="err_login">Email or password is incorrect.</string>
+    <string name="terms_agree">By creating an account you agree to the terms and privacy policy.</string>
+
+    <!-- Setup -->
+    <string name="setup_title">Welcome to Mahina</string>
+    <string name="setup_sub">Two details and you\'re ready to send your first reminder.</string>
+    <string name="field_business_name">Business name</string>
+    <string name="field_business_name_hint">Shown on reminders and receipts.</string>
+    <string name="field_business_type">What kind of business?</string>
+    <string name="field_upi_id">UPI ID</string>
+    <string name="field_upi_id_hint">Find it in GPay, PhonePe or Paytm under your profile. Payments go straight to this account.</string>
+    <string name="field_upi_name">Name on the UPI account</string>
+    <string name="field_reminder_lang">Default reminder language</string>
+    <string name="action_save_continue">Save and add members</string>
+    <string name="err_upi">That UPI ID doesn\'t look right. It should look like name@okhdfcbank.</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_members">Members</string>
+    <string name="nav_plan">Plan</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Dashboard -->
+    <string name="greeting_morning">Good morning, %1$s</string>
+    <string name="greeting_afternoon">Good afternoon, %1$s</string>
+    <string name="greeting_evening">Good evening, %1$s</string>
+    <string name="dash_sub">%1$s at %2$s</string>
+    <string name="stat_collected">Collected this month</string>
+    <string name="stat_collected_sub">%1$d%% of %2$s</string>
+    <string name="stat_pending">Pending</string>
+    <plurals name="stat_pending_sub">
+        <item quantity="one">%d person owes</item>
+        <item quantity="other">%d people owe</item>
+    </plurals>
+    <string name="stat_paid_count">Paid this month</string>
+    <string name="stat_paid_count_value">%1$d of %2$d</string>
+    <string name="to_remind">To remind</string>
+    <string name="recent_payments">Recent payments</string>
+    <string name="all_paid_empty">Everyone has paid. Nothing to chase this month.</string>
+    <string name="no_members_empty">Add your first members to see who owes what.</string>
+    <string name="add_upi_banner">Add your UPI ID so reminders include a payment link with your QR code.</string>
+    <string name="action_add_upi">Add UPI ID</string>
+
+    <!-- Members -->
+    <string name="members_title">Members</string>
+    <string name="members_sub_free">%1$d active · %2$d of 15 on the free plan</string>
+    <string name="search_members">Search name, phone or batch</string>
+    <string name="filter_all">All</string>
+    <string name="filter_due">Owes money</string>
+    <string name="filter_paid">Paid this month</string>
+    <string name="filter_inactive">Inactive</string>
+    <string name="action_add_member">Add member</string>
+    <string name="action_add_several">Add several</string>
+    <string name="action_import_contacts">Pick from contacts</string>
+    <string name="member_row_sub">%1$s/mo · due %2$s</string>
+    <string name="empty_register_title">Your register is empty.</string>
+    <string name="empty_register_body">Add the people who pay you every month. You can paste a whole batch at once.</string>
+    <string name="free_limit_reached">You\'ve reached 15 members on the free plan.</string>
+    <string name="action_upgrade">Upgrade to Pro, ₹149/month</string>
+
+    <!-- Member form -->
+    <string name="field_member_name">Name</string>
+    <string name="field_member_phone">WhatsApp number of whoever pays</string>
+    <string name="field_member_phone_hint">For students, use a parent\'s number.</string>
+    <string name="field_fee">Monthly fee (₹)</string>
+    <string name="field_due_day">Due on day</string>
+    <string name="field_due_day_hint">1 to 28</string>
+    <string name="field_batch">Batch or group</string>
+    <string name="field_start_month">Start month</string>
+    <string name="field_notes">Notes</string>
+    <string name="bulk_hint">One member per line: name, phone, monthly fee</string>
+    <string name="action_add_all">Add all</string>
+    <string name="action_save_changes">Save changes</string>
+
+    <!-- Member detail -->
+    <string name="member_detail_sub">%1$s a month · due on the %2$s</string>
+    <string name="stat_outstanding">Outstanding</string>
+    <string name="stat_paid_so_far">Paid so far</string>
+    <string name="stat_since">Since</string>
+    <string name="month_by_month">Month by month</string>
+    <string name="month_by_month_hint">Tap a month that isn\'t paid to record a payment for it.</string>
+    <string name="status_paid">Paid</string>
+    <string name="status_due">Due</string>
+    <string name="status_upcoming">Upcoming</string>
+    <string name="status_part_paid">%1$s left</string>
+    <string name="payments">Payments</string>
+    <string name="action_remind">Remind</string>
+    <string name="action_record_payment">Record payment</string>
+    <string name="action_mark_paid">Mark paid</string>
+    <string name="action_edit_details">Edit details</string>
+    <string name="action_mark_inactive">Mark inactive</string>
+    <string name="action_mark_active">Mark active</string>
+    <string name="action_delete_member">Delete member</string>
+    <string name="delete_member_title">Delete %1$s?</string>
+    <string name="delete_member_body">This permanently deletes %1$s and all recorded payments. To keep their history, mark them inactive instead.</string>
+    <string name="action_delete_permanently">Delete permanently</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- Record payment -->
+    <string name="record_payment_title">Record payment from %1$s</string>
+    <string name="field_for_month">For month</string>
+    <string name="field_amount">Amount (₹)</string>
+    <string name="field_paid_on">Paid on</string>
+    <string name="field_paid_by">Paid by</string>
+    <string name="method_upi">UPI</string>
+    <string name="method_cash">Cash</string>
+    <string name="method_bank">Bank</string>
+    <string name="method_other">Other</string>
+    <string name="field_note_optional">Note (optional)</string>
+    <string name="payment_recorded">Payment of %1$s recorded for %2$s.</string>
+    <string name="action_send_receipt">Send receipt on WhatsApp</string>
+    <string name="action_done">Done</string>
+
+    <!-- Reminder composer -->
+    <string name="remind_title">Remind %1$s</string>
+    <string name="lang_hinglish">Hinglish</string>
+    <string name="lang_hindi">हिंदी</string>
+    <string name="lang_english">English</string>
+    <string name="tone_gentle">Gentle</string>
+    <string name="tone_firm">Firm</string>
+    <string name="action_open_whatsapp">Open WhatsApp</string>
+    <string name="action_copy_message">Copy message</string>
+    <string name="copied">Copied</string>
+    <string name="no_phone_note">No phone number saved, so WhatsApp will ask you to pick a chat.</string>
+
+    <!-- Reminder templates. Args: 1 business, 2 member first name, 3 months, 4 amount, 5 pay link -->
+    <string name="tpl_en_gentle">Hello 👋\nA gentle reminder from %1$s: the fee of %4$s for %2$s (%3$s) is due.\nPay in one tap by UPI: %5$s\nIf you have already paid, please ignore this message. Thank you!</string>
+    <string name="tpl_en_firm">Hello,\n%1$s: the fee of %4$s for %2$s (%3$s) is still pending. Please clear it today.\nPay by UPI: %5$s\nThank you.</string>
+    <string name="tpl_hinglish_gentle">Namaste 🙏\n%1$s: %2$s ki %3$s ki fees %4$s due hai.\nEk click mein UPI se pay karein: %5$s\nAgar payment ho gaya hai toh is message ko ignore karein. Thank you!</string>
+    <string name="tpl_hinglish_firm">Namaste 🙏\n%1$s: %2$s ki %3$s ki fees %4$s abhi tak pending hai. Kripya aaj payment kar dijiye.\nUPI se pay karein: %5$s\nDhanyavaad</string>
+    <string name="tpl_hi_gentle">नमस्ते 🙏\n%1$s: %2$s की %3$s की फीस %4$s देय है।\nएक क्लिक में UPI से भुगतान करें: %5$s\nअगर भुगतान हो गया है तो कृपया इस संदेश को अनदेखा करें। धन्यवाद!</string>
+    <string name="tpl_hi_firm">नमस्ते 🙏\n%1$s: %2$s की %3$s की फीस %4$s अभी तक बाकी है। कृपया आज भुगतान कर दें।\nUPI से भुगतान करें: %5$s\nधन्यवाद</string>
+    <!-- Args: 1 business, 2 amount, 3 member first name, 4 month, 5 receipt link -->
+    <string name="tpl_receipt">Payment received ✅\n%1$s: %2$s for %3$s (%4$s).\nReceipt: %5$s\nThank you!</string>
+
+    <!-- Plan -->
+    <string name="plan_title">Your plan</string>
+    <string name="plan_pro_until">Pro until %1$s</string>
+    <string name="plan_free_usage">Free plan · %1$d of 15 members used</string>
+    <string name="plan_monthly">Pro monthly</string>
+    <string name="plan_yearly">Pro yearly</string>
+    <string name="plan_yearly_note">₹124 a month, two months free</string>
+    <string name="plan_feature_unlimited">Unlimited members</string>
+    <string name="plan_feature_support">Priority email support</string>
+    <string name="plan_feature_no_renew">No auto-renewal</string>
+    <string name="action_upgrade_short">Upgrade</string>
+    <string name="action_extend">Extend Pro</string>
+    <string name="plan_footer">Pay with UPI, card or net banking through Razorpay. Pro is prepaid and doesn\'t renew on its own.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="where_members_pay">Where members pay you</string>
+    <string name="action_save_settings">Save settings</string>
+    <string name="settings_saved">Settings saved.</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="help_and_support">Help and support</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="terms">Terms and conditions</string>
+    <string name="delete_account">Delete account and data</string>
+
+    <!-- Errors -->
+    <string name="err_network">Couldn\'t reach Mahina. Check your internet and try again.</string>
+    <string name="err_free_limit">The free plan allows up to 15 members. Upgrade to Pro to add more.</string>
+    <string name="err_phone">Enter a valid phone number (10 digits).</string>
+</resources>

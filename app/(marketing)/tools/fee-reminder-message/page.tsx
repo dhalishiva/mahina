@@ -29,7 +29,7 @@ export default function Page() {
           <p>Send it in the morning, a day or two after the due date. People pay more readily early in the day and early in the month, when salary has just arrived.</p>
         </div>
         <p className="mt-8 rounded-2xl bg-ink-soft p-6 text-lg">
-          Sending these every month? <Link href="/signup" className="font-semibold text-ink underline">Mahina</Link> fills in the name, amount and month for every member, adds your personal UPI payment link, and keeps track of who paid. Free for up to 15 members.
+          Sending these every month? <Link href="/signup" target="_blank" rel="noopener" className="font-semibold text-ink underline">Mahina</Link> fills in the name, amount and month for every member, adds your personal UPI payment link, and keeps track of who paid. Free for up to 15 members.
         </p>
       </section>
 
