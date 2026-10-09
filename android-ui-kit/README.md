@@ -39,8 +39,8 @@ Everything needed to build the native Android app for **Mahina by SlotRecover**.
 | --- | --- | --- |
 | 01 | Splash | Ink background, logo and wordmark. Use the Android 12+ SplashScreen API with `ic_launcher_foreground` on `@color/ink`. |
 | 02 | Onboarding | 3 pages in a HorizontalPager (copy is `onb1`–`onb3` in strings). Shown once; store a flag in DataStore. "Skip" goes to Sign up. |
-| 03 | Log in | Email and password. A text button switches to "Email me a sign-in link" (magic link). A "Forgot password?" link. |
-| 04 | Sign up | Name, email and password (min 8 characters). If the response has no session, show "Check your email". |
+| 03 | Log in | Email and password. A text button switches to "Log in with a code": `signInWithOtp(shouldCreateUser=false)`, then `verifyOtp(type=email)`. A "Forgot password?" link. |
+| 04 | Sign up | Name, email and password (min 8 characters). Then a 6–8 digit code screen: `verifyOtp(type=signup)`; resend with `resend(type=signup)` after a 60 s cooldown. Use `autofill` hints for one-time codes. |
 | 05 | First-run setup | Shown when `profiles.business_name` is empty. Fields: business name, business type, UPI ID, name on UPI. Validate the UPI ID with `^[a-z0-9._-]{2,64}@[a-z]{2,32}$`. |
 | 06 | Home | See "Home screen details" below. |
 | 07 | Members | Search field, filter chips (All, Owes money, Paid this month, Inactive), a batch dropdown when batches exist, and an extended FAB "Add member". Overflow menu: Add several, Pick from contacts, Export CSV. |
@@ -119,8 +119,9 @@ After recording a payment, send the `tpl_receipt` text with the link `https://ma
 
 ### Auth
 
-- Email and password, magic link, and password reset are all in use.
-- For deep links back into the app, register the scheme `app.mahina://auth-callback` and add it to Supabase → Auth → Redirect URLs.
+- Email and password, email code login, and password reset are all in use. Every email carries a **6–8 digit code** (no links), so no deep-link setup is needed.
+- Password reset: `resetPasswordForEmail(email)`, then `verifyOtp(type=recovery)`, then `updateUser(password)`.
+- Every send is limited to once per 60 s per email, so show a resend countdown.
 
 ### Tables
 

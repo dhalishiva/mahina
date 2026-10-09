@@ -5,62 +5,91 @@ import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { Alert, Button, Field } from "@/components/ui";
 import { safeNext } from "@/lib/safe-next";
+import { OtpField, authErrorText, useCooldown } from "@/components/OtpField";
 
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const next = safeNext(params.get("next"));
-  const [mode, setMode] = useState<"password" | "link">("password");
+  const [mode, setMode] = useState<"password" | "code">("password");
+  const [codeSent, setCodeSent] = useState(false);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<{ kind: "error" | "ok"; text: string } | null>(
-    params.get("error") ? { kind: "error", text: "That sign-in link has expired or was already used. Request a new one." } : null
-  );
+  const [msg, setMsg] = useState<{ kind: "error" | "ok"; text: string } | null>(null);
+  const cooldown = useCooldown();
+  const sb = supabaseBrowser();
+
+  function done() { router.replace(next); router.refresh(); }
+
+  async function sendCode(em: string) {
+    const { error } = await sb.auth.signInWithOtp({ email: em, options: { shouldCreateUser: false } });
+    if (error) {
+      setMsg({ kind: "error", text: error.message.toLowerCase().includes("signups not allowed") || error.message.toLowerCase().includes("not found") ? "No account uses that email. Sign up first." : authErrorText(error.message) });
+      return false;
+    }
+    cooldown.start();
+    return true;
+  }
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
     setMsg(null);
     const fd = new FormData(e.currentTarget);
-    const email = String(fd.get("email")).trim();
-    const sb = supabaseBrowser();
     if (mode === "password") {
-      const { error } = await sb.auth.signInWithPassword({ email, password: String(fd.get("password")) });
-      if (error) {
-        setMsg({ kind: "error", text: error.message.includes("confirm") ? "Confirm your email first. We sent you a link when you signed up." : "Email or password is incorrect." });
-        setBusy(false);
-        return;
-      }
-      router.replace(next);
-      router.refresh();
-    } else {
-      const { error } = await sb.auth.signInWithOtp({
-        email,
-        options: { shouldCreateUser: false, emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
-      });
+      const em = String(fd.get("email")).trim().toLowerCase();
+      const { error } = await sb.auth.signInWithPassword({ email: em, password: String(fd.get("password")) });
       setBusy(false);
-      setMsg(error ? { kind: "error", text: "We couldn't send a link to that email. Check it or sign up first." } : { kind: "ok", text: `Check ${email} for a sign-in link.` });
+      if (!error) return done();
+      if (error.message.toLowerCase().includes("confirm")) {
+        // Account exists but email isn't verified yet: send a fresh signup code.
+        await sb.auth.resend({ type: "signup", email: em });
+        setMsg({ kind: "error", text: "Confirm your email first. We've sent you a new code; use “Log in with a code” to enter it." });
+      } else setMsg({ kind: "error", text: error.message.toLowerCase().includes("rate") ? authErrorText(error.message) : "Email or password is incorrect." });
+      return;
     }
+    if (!codeSent) {
+      const em = String(fd.get("email")).trim().toLowerCase();
+      const ok = await sendCode(em);
+      setBusy(false);
+      if (ok) { setEmail(em); setCodeSent(true); }
+      return;
+    }
+    if (code.length < 6) { setBusy(false); setMsg({ kind: "error", text: "Enter the code from your email." }); return; }
+    const { error } = await sb.auth.verifyOtp({ email, token: code, type: "email" });
+    setBusy(false);
+    if (error) setMsg({ kind: "error", text: authErrorText(error.message) }); else done();
   }
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-extrabold tracking-tight">Welcome back</h1>
-      <p className="mt-2 text-muted">Log in to your fee register.</p>
+      <h1 className="font-display text-3xl font-extrabold tracking-tight">{codeSent ? "Check your email" : "Welcome back"}</h1>
+      <p className="mt-2 text-muted">{codeSent ? <>We sent a code to <b className="text-text">{email}</b>.</> : "Log in to your fee register."}</p>
       <form onSubmit={submit} className="mt-8 space-y-4">
-        <Field label="Email" name="email" type="email" required autoComplete="email" maxLength={120} />
+        {!codeSent && <Field label="Email" name="email" type="email" required autoComplete="email" maxLength={120} defaultValue={email} />}
         {mode === "password" && (
           <div>
             <Field label="Password" name="password" type="password" required autoComplete="current-password" minLength={8} />
             <Link href="/reset-password" className="mt-2 inline-block text-sm text-ink hover:underline">Forgot password?</Link>
           </div>
         )}
+        {mode === "code" && codeSent && <OtpField value={code} onChange={setCode} />}
         {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
         <Button type="submit" disabled={busy} className="w-full py-3">
-          {busy ? "Please wait…" : mode === "password" ? "Log in" : "Email me a sign-in link"}
+          {busy ? "Please wait…" : mode === "password" ? "Log in" : codeSent ? "Log in" : "Email me a code"}
         </Button>
       </form>
-      <button type="button" onClick={() => { setMode(mode === "password" ? "link" : "password"); setMsg(null); }} className="mt-4 w-full text-center text-sm font-medium text-ink hover:underline">
-        {mode === "password" ? "Log in with an email link instead" : "Log in with a password instead"}
+      {mode === "code" && codeSent && (
+        <div className="mt-4 flex justify-between text-sm">
+          <button className="font-semibold text-ink disabled:text-muted" disabled={cooldown.left > 0} onClick={async () => { setMsg(null); await sendCode(email); }}>
+            {cooldown.left > 0 ? `Send a new code in ${cooldown.left}s` : "Send a new code"}
+          </button>
+          <button className="font-semibold text-muted hover:text-text" onClick={() => { setCodeSent(false); setCode(""); setMsg(null); }}>Change email</button>
+        </div>
+      )}
+      <button type="button" onClick={() => { setMode(mode === "password" ? "code" : "password"); setCodeSent(false); setCode(""); setMsg(null); }} className="mt-4 w-full text-center text-sm font-medium text-ink hover:underline">
+        {mode === "password" ? "Log in with a code instead" : "Log in with a password instead"}
       </button>
       <p className="mt-8 text-center text-sm text-muted">New to Mahina? <Link href="/signup" className="font-semibold text-ink hover:underline">Create a free account</Link></p>
     </div>
